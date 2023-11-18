@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { forwardRef, KeyboardEventHandler, useCallback, useImperativeHandle, useRef, useState } from "react";
 import styled from "styled-components";
 
 type Props = {
@@ -6,10 +6,10 @@ type Props = {
     validNotes: string[];
 };
 
-export const InputField = React.forwardRef(({ onSubmit, validNotes }: Props, ref) => {
+export const InputField = forwardRef(({ onSubmit, validNotes }: Props, ref) => {
     const inputRef = useRef(null);
 
-    React.useImperativeHandle(ref, () => inputRef.current);
+    useImperativeHandle(ref, () => inputRef.current);
 
     const [input, setInput] = useState("");
 
@@ -17,7 +17,7 @@ export const InputField = React.forwardRef(({ onSubmit, validNotes }: Props, ref
         return validNotes.includes(input.toUpperCase());
     }, [validNotes]);
 
-    const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback((event) => {
+    const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback((event) => {
         if (event.key !== "Enter") return;
 
         if (!isValidNote(input)) return;
@@ -33,6 +33,6 @@ export const InputField = React.forwardRef(({ onSubmit, validNotes }: Props, ref
 
 
 const UserInput = styled.input`
-    border: 0px;
     background-color: transparent;
+    border-radius: 3px;
 `;

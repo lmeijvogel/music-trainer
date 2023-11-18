@@ -2,6 +2,8 @@ import React from 'react';
 import { useEffect, useRef } from "react";
 import Vex from "vexflow";
 
+const vf = Vex.Flow;
+
 export type Prompt = {
     type: "single";
     note: string;
@@ -22,24 +24,26 @@ export const TestStave: React.FC<Props> = ({ keySignature, prompt }) => {
     useEffect(() => {
         if (!ref.current) return;
 
-        console.log("Ref: ", ref.current.id);
+        if (prompt.type !== "single") return;
+
         ref.current.innerHTML = "";
 
-        const { Factory } = Vex.Flow;
+        const renderer = new vf.Renderer(ref.current, vf.Renderer.Backends.SVG);
 
-        const vf = new Factory({ renderer: { elementId: ref.current.id } });
-        const score = vf.EasyScore();
-        const system = vf.System();
+        renderer.resize(300, 150);
+        const context = renderer.getContext();
 
-        const notes = prompt.type === "single" ? score.voice(score.notes(`${prompt.note}/w`, { stem: "down" }), {}) : "null";
-        system.addStave({
-            voices: [
-                notes
-            ]
-        }).addClef('treble').addKeySignature(keySignature).addTimeSignature('4/4');
+        const stave = new vf.Stave(10, 10, 280);
+        stave.addClef("treble").addKeySignature(keySignature);
 
-        vf.draw();
+        stave.setContext(context).draw();
+
+        const notes = [
+            new vf.StaveNote({ keys: [`${prompt.note}`], duration: "1", auto_stem: true }).setCenterAlignment(true)
+        ];
+
+        vf.Formatter.FormatAndDraw(context, stave, notes);
     }, [ref, prompt, keySignature]);
 
-    return <div ref={ref} id="theElement" />
+    return <div ref={ref} />
 }

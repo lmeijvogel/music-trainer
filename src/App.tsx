@@ -24,10 +24,10 @@ function buildCandidateNotes(): string[] {
         if (note === "C") octave++;
         noteIndex++;
 
-        noteAndOctave = `${note}${octave}`;
+        noteAndOctave = `${note}/${octave}`;
 
         result.push(noteAndOctave);
-    } while (noteAndOctave !== "A5");
+    } while (noteAndOctave !== "A/5");
 
     return result;
 }
