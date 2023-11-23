@@ -1,30 +1,20 @@
 import React from 'react';
 import { useEffect, useRef } from "react";
 import Vex from "vexflow";
+import { SingleNotePrompt } from './Prompt';
 
 const vf = Vex.Flow;
 
-export type Prompt = {
-    type: "single";
-    note: string;
-} | {
-    type: "chord";
-    name: string;
-    notes: string[];
-};
-
 type Props = {
     keySignature: string,
-    prompt: Prompt
+    prompt: SingleNotePrompt
 };
 
-export const TestStave: React.FC<Props> = ({ keySignature, prompt }) => {
+export const SingleNoteStave: React.FC<Props> = ({ keySignature, prompt }) => {
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!ref.current) return;
-
-        if (prompt.type !== "single") return;
 
         ref.current.innerHTML = "";
 
@@ -37,12 +27,9 @@ export const TestStave: React.FC<Props> = ({ keySignature, prompt }) => {
         stave.addClef("treble").addKeySignature(keySignature);
 
         stave.setContext(context).draw();
+        const note = new vf.StaveNote({ keys: [`${prompt.toVex()}`], duration: "1", auto_stem: true }).setCenterAlignment(true);
 
-        const notes = [
-            new vf.StaveNote({ keys: [`${prompt.note}`], duration: "1", auto_stem: true }).setCenterAlignment(true)
-        ];
-
-        vf.Formatter.FormatAndDraw(context, stave, notes);
+        vf.Formatter.FormatAndDraw(context, stave, [note]);
     }, [ref, prompt, keySignature]);
 
     return <div ref={ref} />

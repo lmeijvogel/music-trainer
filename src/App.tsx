@@ -1,70 +1,28 @@
 import './App.css';
-import { Prompt, TestStave } from './TestStave';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Prompt, SingleNotePrompt } from './Prompt';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { InputField } from './InputField';
-
-const allNotes = ["E", "F", "G", "A", "B", "C", "D"];
-
-const candidateNotes = buildCandidateNotes();
-
-/**
- * Returns all (for now) relevant notes on guitar, from low E to A on the highest string
- */
-function buildCandidateNotes(): string[] {
-    let noteIndex = 0;
-    let octave = 3;
-
-    let noteAndOctave = "";
-
-    const result = [];
-    do {
-        const note = allNotes[noteIndex % allNotes.length];
-
-        if (note === "C") octave++;
-        noteIndex++;
-
-        noteAndOctave = `${note}/${octave}`;
-
-        result.push(noteAndOctave);
-    } while (noteAndOctave !== "A/5");
-
-    return result;
-}
-
-function getNextPrompt(): Prompt {
-    const randomIndex = Math.floor(Math.random() * candidateNotes.length);
-
-    return {
-        type: "single",
-        note: candidateNotes[randomIndex]
-    };
-}
-
-function toAnswerFormat(prompt: Prompt): string {
-    if (prompt.type === "single")
-        return prompt.note[0].toLowerCase();
-    else
-        return prompt.name;
-}
+import { PromptGenerator } from './PromptGenerator';
+import { SingleNoteStave } from './SingleNoteStave';
 
 function App() {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const [prompt, setPrompt] = useState<Prompt>(getNextPrompt);
+    const promptGenerator = useMemo(() => new PromptGenerator(["C", "F", "G"]), []);
+
+    const [prompt, setPrompt] = useState<Prompt>(promptGenerator.next());
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
     const onSubmitInput = useCallback((input: string) => {
-        if (input === toAnswerFormat(prompt)) {
-            setPrompt(getNextPrompt());
+        if (prompt.check(input)) {
+            setPrompt(promptGenerator.next());
             setErrorMessage(undefined);
         } else {
-            setErrorMessage(`Wrong, the note was ${toAnswerFormat(prompt)}.`);
+            setErrorMessage(`Wrong, the note was ${prompt.toString()}.`);
         }
-
-
-    }, [prompt]);
+    }, [prompt, promptGenerator]);
 
     const onAppClick = useCallback(() => {
         inputRef.current?.focus();
@@ -78,9 +36,10 @@ function App() {
         <div className="App" tabIndex={0} onClick={onAppClick}>
             <header className="App-header">
                 <ErrorDisplay visible={!!errorMessage}>{errorMessage ?? " "}</ErrorDisplay>
-                <TestStave prompt={prompt} keySignature={"C"} />
+                {prompt instanceof SingleNotePrompt ?
+                    <SingleNoteStave prompt={prompt} keySignature={prompt.keySignature} /> : null}
 
-                <InputField ref={inputRef} onSubmit={onSubmitInput} validNotes={allNotes} />
+                <InputField ref={inputRef} onSubmit={onSubmitInput} validator={(note: string) => !!note.match(/[A-Ga-g]/)} />
             </header>
         </div >
     );

@@ -3,10 +3,10 @@ import styled from "styled-components";
 
 type Props = {
     onSubmit: (input: string) => void;
-    validNotes: string[];
+    validator: (input: string) => boolean;
 };
 
-export const InputField = forwardRef(({ onSubmit, validNotes }: Props, ref) => {
+export const InputField = forwardRef(({ onSubmit, validator }: Props, ref) => {
     const inputRef = useRef(null);
 
     useImperativeHandle(ref, () => inputRef.current);
@@ -14,8 +14,8 @@ export const InputField = forwardRef(({ onSubmit, validNotes }: Props, ref) => {
     const [input, setInput] = useState("");
 
     const isValidNote = useCallback((input: string) => {
-        return validNotes.includes(input.toUpperCase());
-    }, [validNotes]);
+        return validator(input);
+    }, [validator]);
 
     const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback((event) => {
         if (event.key !== "Enter") return;
