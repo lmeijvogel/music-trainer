@@ -1,10 +1,11 @@
 import './App.css';
-import { Prompt, SingleNotePrompt } from './Prompt';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { InputField } from './InputField';
 import { PromptGenerator } from './PromptGenerator';
-import { SingleNoteStave } from './SingleNoteStave';
+import { Prompt } from './prompts/Prompt';
+import { SingleNoteStave } from './prompts/singleNote/SingleNoteStave';
+import { SingleNotePrompt } from './prompts/singleNote/SingleNotePrompt';
 
 function App() {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +38,7 @@ function App() {
             <header className="App-header">
                 <ErrorDisplay visible={!!errorMessage}>{errorMessage ?? " "}</ErrorDisplay>
                 {prompt instanceof SingleNotePrompt ?
-                    <SingleNoteStave prompt={prompt} keySignature={prompt.keySignature} /> : null}
+                    <SingleNoteStave prompt={prompt} /> : null}
 
                 <InputField ref={inputRef} onSubmit={onSubmitInput} validator={(note: string) => !!note.match(/[A-Ga-g]/)} />
             </header>

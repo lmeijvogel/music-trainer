@@ -1,13 +1,11 @@
 import { Scale } from "tonal";
-import { SingleNotePrompt } from "./Prompt";
-import { Prompt } from "./Prompt";
+import { Prompt } from "./prompts/Prompt";
+import { SingleNotePrompt } from "./prompts/singleNote/SingleNotePrompt";
 
 export class PromptGenerator {
-    prompt: Prompt;
+    private prompt: Prompt | undefined;
 
-    constructor(readonly allowedKeySignatures: string[]) {
-        this.prompt = this.makeRandomPrompt();
-    }
+    constructor(readonly allowedKeySignatures: string[]) { }
 
     next(): Prompt {
         this.prompt = this.makeRandomPrompt();
@@ -38,7 +36,10 @@ export class PromptGenerator {
     private pickRandomKeySignature() {
         const sigs = this.allowedKeySignatures;
 
-        return sigs[Math.floor(Math.random() * sigs.length)];
+        const randomIndex = Math.floor(Math.random() * sigs.length);
+
+        console.log({ randomIndex });
+        return sigs[randomIndex];
     }
 }
 

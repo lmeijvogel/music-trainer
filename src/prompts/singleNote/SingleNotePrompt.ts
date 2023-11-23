@@ -1,10 +1,5 @@
 import { Note } from "tonal";
-
-export abstract class Prompt {
-    constructor(readonly keySignature: string) { }
-
-    abstract check(answer: string): boolean;
-}
+import { Prompt } from "../Prompt";
 
 export class SingleNotePrompt extends Prompt {
     constructor(keySignature: string, readonly note: string) {
