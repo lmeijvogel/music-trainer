@@ -1,4 +1,4 @@
-import { Scale } from "tonal";
+import { Note, Scale } from "tonal";
 import { Prompt } from "./prompts/Prompt";
 import { SingleNotePrompt } from "./prompts/singleNote/SingleNotePrompt";
 
@@ -28,9 +28,12 @@ export class PromptGenerator {
     private candidateNotes(keySignature: string): string[] {
         const range = Scale.rangeOf(`${keySignature} major`);
 
-        const allNotes = range("E3", "A5");
+        const allNotes = range("E3", "A5").filter(isNotNull);
 
-        return allNotes.filter(isNotNull);
+        // Extra emphasis on notes with accidentals since we want to learn those
+        const notesWithAccidentals = allNotes.filter(note => Note.get(note).acc !== "");
+
+        return [...allNotes, ...notesWithAccidentals];
     }
 
     private pickRandomKeySignature() {
