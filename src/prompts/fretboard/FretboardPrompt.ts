@@ -1,13 +1,14 @@
 import { Note } from "tonal";
 import { Prompt } from "../Prompt";
 
-export class SingleNotePrompt extends Prompt {
+export class FretboardPrompt extends Prompt {
     constructor(keySignature: string, readonly note: string) {
         super(keySignature);
     }
 
     check(answer: string) {
-        return answer.toLowerCase() === Note.pitchClass(this.note).toLowerCase();
+        console.log("Received answer: ", answer, ". Should be ", this.note);
+        return answer === this.note;
     }
 
     toVex(): string {
@@ -15,7 +16,7 @@ export class SingleNotePrompt extends Prompt {
     }
 
     equals(other: Prompt | undefined) {
-        if (other instanceof SingleNotePrompt) {
+        if (other instanceof FretboardPrompt) {
             return this.keySignature === other.keySignature && this.note === other.note;
         }
 

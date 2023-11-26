@@ -1,12 +1,12 @@
 import React from 'react';
 import { useEffect, useRef } from "react";
 import Vex from "vexflow";
-import { SingleNotePrompt } from './SingleNotePrompt';
+import { Prompt } from './Prompt';
 
 const vf = Vex.Flow;
 
 type Props = {
-    prompt: SingleNotePrompt
+    prompt: Prompt
 };
 
 export const SingleNoteStave: React.FC<Props> = ({ prompt }) => {
