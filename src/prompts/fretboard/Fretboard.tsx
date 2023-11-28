@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Note, Scale } from "tonal";
 import { calculateFretPosition } from "./calculateFretPosition";
@@ -22,7 +22,7 @@ export const Fretboard = ({ onNoteClick }: { onNoteClick: OnNoteClick }) => {
 
     const lastFretX = calculateFretPosition(displayedFretCount, fullScaleLength);
 
-    const onClick = (note: string) => onNoteClick(note);
+    const onClick = useCallback((note: string) => onNoteClick(note), [onNoteClick]);
 
     return <svg viewBox="0 0 300 100">
         {strings.map((note, index) => (

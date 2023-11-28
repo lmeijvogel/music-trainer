@@ -1,4 +1,4 @@
-import { Note, Scale } from "tonal";
+import { Key, Note, Scale } from "tonal";
 import { Prompt } from "./prompts/Prompt";
 
 export class PromptGenerator {
@@ -35,7 +35,13 @@ export class PromptGenerator {
 
         const note = candidateNotes[randomIndex];
 
-        return this.ctor(keySignature, note);
+        const key = Key.majorKey(keySignature);
+
+        const differentAccidentals = Note.get(note).acc.startsWith("#") && key.alteration < 0;
+
+        const correctedNote = differentAccidentals ? Note.enharmonic(note) : note;
+
+        return this.ctor(keySignature, correctedNote);
     }
 
     private candidateNotes(keySignature: string): string[] {

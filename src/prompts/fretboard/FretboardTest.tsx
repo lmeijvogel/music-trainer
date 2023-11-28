@@ -6,14 +6,16 @@ import { SingleNoteStave } from "../SingleNoteStave";
 import { Fretboard } from "./Fretboard";
 import { FretboardPrompt } from "./FretboardPrompt";
 
+const keys = ["C", "F", "Bb", "Eb", "G", "D", "A", "E"];
+
 export const FretboardTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const promptGenerator = useMemo(() => new PromptGenerator(
-        ["C", "F", "Bb", "Eb", "G", "D", "A", "E"],
+        keys,
         "E3",
         "A5",
-        (keySignature: string, note: string) => new FretboardPrompt(keySignature, note))
+        (keySignature: string, note: string) => new FretboardPrompt(keySignature, note), false)
         , []);
 
     const [prompt, setPrompt] = useState<Prompt>(promptGenerator.next());
@@ -34,6 +36,7 @@ export const FretboardTest = () => {
             setErrorMessage(undefined);
         } else {
             setErrorMessage(`Wrong, the note was ${prompt.toString()}.`);
+            return "bad";
         }
     }, [prompt, promptGenerator]);
 
@@ -48,6 +51,8 @@ export const FretboardTest = () => {
 const ErrorDisplay = styled.div<{ visible: boolean; }>`
     background-color: red;
     color: black;
+    line-height: 2em;
+    height: 2em;
     visibility: ${(props) => props.visible ? "visible" : "hidden"};
 `;
 

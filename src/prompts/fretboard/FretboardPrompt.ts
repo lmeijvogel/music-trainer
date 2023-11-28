@@ -7,8 +7,9 @@ export class FretboardPrompt extends Prompt {
     }
 
     check(answer: string) {
-        console.log("Received answer: ", answer, ". Should be ", this.note);
-        return answer === this.note;
+        const correctedAnswer = this.correctForKey(answer);
+
+        return this.note === correctedAnswer;
     }
 
     toVex(): string {
@@ -24,6 +25,6 @@ export class FretboardPrompt extends Prompt {
     }
 
     toString(): string {
-        return Note.pitchClass(this.note).toLowerCase();
+        return this.note;
     }
 }
