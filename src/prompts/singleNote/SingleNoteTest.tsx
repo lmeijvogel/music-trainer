@@ -9,7 +9,12 @@ import { SingleNoteStave } from "../SingleNoteStave";
 export const SingleNoteTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const promptGenerator = useMemo(() => new PromptGenerator(["C", "F", "G"], (keySignature: string, note: string) => new SingleNotePrompt(keySignature, note)), []);
+    const promptGenerator = useMemo(() => new PromptGenerator(
+        ["C", "F", "Bb", "Eb", "G", "D", "A", "E"],
+        "E3",
+        "A5",
+        (keySignature: string, note: string) => new SingleNotePrompt(keySignature, note))
+        , []);
 
     const [prompt, setPrompt] = useState<Prompt>(promptGenerator.next());
 

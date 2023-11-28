@@ -4,12 +4,20 @@ import { Prompt } from "./prompts/Prompt";
 export class PromptGenerator {
     private prompt: Prompt | undefined;
 
-    constructor(private readonly allowedKeySignatures: string[], private readonly ctor: (keySignature: string, note: string) => Prompt) { }
+    /**
+     * @param preventRepetitions If true, make sure that the same prompt is not repeated. Set this to false when restricting the input to a single note.
+     */
+    constructor(
+        private readonly allowedKeySignatures: string[],
+        private readonly lowestNote: string,
+        private readonly highestNote: string,
+        private readonly ctor: (keySignature: string, note: string) => Prompt,
+        private readonly preventRepetitions = true) { }
 
     next(): Prompt {
         const newPrompt = this.makeRandomPrompt();
 
-        if (newPrompt.equals(this.prompt)) {
+        if (this.preventRepetitions && newPrompt.equals(this.prompt)) {
             return this.next();
         }
 
@@ -33,7 +41,7 @@ export class PromptGenerator {
     private candidateNotes(keySignature: string): string[] {
         const range = Scale.rangeOf(`${keySignature} major`);
 
-        const allNotes = range("E3", "A5").filter(isNotNull);
+        const allNotes = range(this.lowestNote, this.highestNote).filter(isNotNull);
 
         // Extra emphasis on notes with accidentals since we want to learn those
         const notesWithAccidentals = allNotes.filter(note => Note.get(note).acc !== "");
