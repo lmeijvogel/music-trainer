@@ -1,4 +1,5 @@
 import { Note } from "tonal";
+import { correctForKey } from "../../helpers/correctForKey";
 import { Prompt } from "../Prompt";
 
 export class FretboardPrompt extends Prompt {
@@ -7,7 +8,7 @@ export class FretboardPrompt extends Prompt {
     }
 
     check(answer: string) {
-        const correctedAnswer = this.correctForKey(answer);
+        const correctedAnswer = correctForKey(answer, this.keySignature);
 
         return this.note === correctedAnswer;
     }

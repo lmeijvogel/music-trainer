@@ -45,6 +45,8 @@ export class PromptGenerator {
     }
 
     private candidateNotes(keySignature: string): string[] {
+        if (this.lowestNote === this.highestNote) return [this.lowestNote];
+
         const range = Scale.rangeOf(`${keySignature} major`);
 
         const allNotes = range(this.lowestNote, this.highestNote).filter(isNotNull);

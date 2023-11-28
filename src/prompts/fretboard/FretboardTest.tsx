@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
+import { correctForKey } from "../../helpers/correctForKey";
 import { PromptGenerator } from "../../PromptGenerator";
 import { Prompt } from "../Prompt";
 import { SingleNoteStave } from "../SingleNoteStave";
@@ -36,7 +37,7 @@ export const FretboardTest = () => {
             setErrorMessage(undefined);
             return "good";
         } else {
-            setErrorMessage(`You answered ${input}, but the note was ${prompt.toString()}.`);
+            setErrorMessage(`You answered ${correctForKey(input, prompt.keySignature)}, but the note is ${prompt.toString()}.`);
             return "bad";
         }
     }, [prompt, promptGenerator]);
