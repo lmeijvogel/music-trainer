@@ -8,7 +8,7 @@ const fullScaleLength = 400;
 
 const displayedFretCount = 15;
 
-type OnNoteClick = (note: string) => void;
+type OnNoteClick = (note: string) => "good" | "bad" | undefined;
 
 function calculateFretCenter(fretNumber: number): number {
     const left = calculateFretPosition(fretNumber - 1, fullScaleLength);
@@ -78,14 +78,13 @@ const ClickableOpenString = ({ note, y, onClick }: { note: string, y: number, on
 };
 
 const ClickableFret = ({ note, y, left, right, onClick }: { note: string, y: number, left: number, right: number, onClick: OnNoteClick }) => {
-    const [clicked, setClicked] = useState(false);
+    const [clicked, setClicked] = useState<"good" | "bad" | undefined>(undefined);
 
     const onRectClicked = () => {
-        setClicked(true);
-        onClick(note);
+        setClicked(onClick(note));
 
         setTimeout(() => {
-            setClicked(false);
+            setClicked(undefined);
         }, 0);
     };
 
@@ -100,8 +99,8 @@ const ClickableFret = ({ note, y, left, right, onClick }: { note: string, y: num
 
 };
 
-const ClickableFretSvg = styled.rect<{ clicked: boolean }>`
-    stroke: ${props => props.clicked ? "#ff0000" : "transparent"};
+const ClickableFretSvg = styled.rect<{ clicked: "good" | "bad" | undefined }>`
+    stroke: ${props => props.clicked === "good" ? "#55ff55" : props.clicked === "bad" ? "#ff0000" : "transparent"};
     ${props => props.clicked ? "" : "transition: stroke 1s,stroke-width 1s"};
     stroke-width: ${props => props.clicked ? 1 : 0.1};
 

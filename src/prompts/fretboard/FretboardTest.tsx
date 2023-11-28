@@ -34,8 +34,9 @@ export const FretboardTest = () => {
         if (prompt.check(input)) {
             setPrompt(promptGenerator.next());
             setErrorMessage(undefined);
+            return "good";
         } else {
-            setErrorMessage(`Wrong, the note was ${prompt.toString()}.`);
+            setErrorMessage(`You answered ${input}, but the note was ${prompt.toString()}.`);
             return "bad";
         }
     }, [prompt, promptGenerator]);
