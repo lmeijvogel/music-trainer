@@ -8,6 +8,7 @@ const fullScaleLength = 400;
 
 const displayedFretCount = 15;
 
+const paddingLeft = 20;
 type OnNoteClick = (note: string) => "good" | "bad" | undefined;
 
 function calculateFretCenter(fretNumber: number): number {
@@ -24,9 +25,11 @@ export const Fretboard = ({ onNoteClick }: { onNoteClick: OnNoteClick }) => {
 
     const onClick = useCallback((note: string) => onNoteClick(note), [onNoteClick]);
 
-    return <svg viewBox="0 0 300 100">
+    const maxStringX = paddingLeft + lastFretX;
+
+    return <FretboardSvg viewBox={`0 0 ${maxStringX + 10} 60`}>
         {strings.map((note, index) => (
-            <GuitarString note={note} key={note} x1={paddingLeft} x2={paddingLeft + lastFretX} y={index * stringDistance + 10} onClick={onClick} />
+            <GuitarString note={note} key={note} x1={paddingLeft} x2={maxStringX} y={index * stringDistance + 10} onClick={onClick} />
         ))}
         {range(0, 12).map(fretNumber => {
             const x = calculateFretPosition(fretNumber, fullScaleLength);
@@ -47,8 +50,12 @@ export const Fretboard = ({ onNoteClick }: { onNoteClick: OnNoteClick }) => {
         })}
 
         <OctaveMarker cx={paddingLeft + calculateFretCenter(12)} cy={7 * stringDistance} r={1} />;
-    </svg>;
+    </FretboardSvg>;
 }
+
+const FretboardSvg = styled.svg`
+    width: 100vw;
+`;
 
 const GuitarString = ({ note, x1, x2, y, onClick }: { note: string, x1: number, x2: number, y: number, onClick: OnNoteClick }) => {
     const getAllNotes = (note: string) => Scale.get(`${note} chromatic`).notes;

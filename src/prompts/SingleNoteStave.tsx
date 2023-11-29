@@ -19,10 +19,10 @@ export const SingleNoteStave: React.FC<Props> = ({ prompt }) => {
 
         const renderer = new vf.Renderer(ref.current, vf.Renderer.Backends.SVG);
 
-        renderer.resize(300, 150);
+        renderer.resize(241, 120);
         const context = renderer.getContext();
 
-        const stave = new vf.Stave(10, 10, 280);
+        const stave = new vf.Stave(10, 0, 230);
         stave.addClef("treble").addKeySignature(prompt.keySignature);
 
         stave.setContext(context).draw();

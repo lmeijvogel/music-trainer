@@ -53,8 +53,8 @@ export const FretboardTest = () => {
 const ErrorDisplay = styled.div<{ visible: boolean; }>`
     background-color: red;
     color: black;
-    line-height: 2em;
-    height: 2em;
+    line-height: 1.5em;
+    height: 1.5em;
     visibility: ${(props) => props.visible ? "visible" : "hidden"};
 `;
 
