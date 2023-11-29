@@ -8,6 +8,7 @@ const fullScaleLength = 400;
 
 const displayedFretCount = 12;
 
+const paddingTop = 4;
 const paddingLeft = 20;
 type OnNoteClick = (note: string) => "good" | "bad" | undefined;
 
@@ -27,29 +28,31 @@ export const Fretboard = ({ onNoteClick }: { onNoteClick: OnNoteClick }) => {
 
     const maxStringX = paddingLeft + lastFretX;
 
+    const fretHeight = (strings.length - 1) * stringDistance + paddingTop;
+
     return <FretboardSvg viewBox={`0 0 ${maxStringX + 10} 60`}>
         {strings.map((note, index) => (
-            <GuitarString note={note} key={note} x1={paddingLeft} x2={maxStringX} y={index * stringDistance + 10} onClick={onClick} />
+            <GuitarString note={note} key={note} x1={paddingLeft} x2={maxStringX} y={index * stringDistance + paddingTop} onClick={onClick} />
         ))}
         {range(0, 12).map(fretNumber => {
             const x = calculateFretPosition(fretNumber, fullScaleLength);
 
-            return <Fret key={fretNumber} x1={paddingLeft + x} x2={paddingLeft + x} y1={10} y2={45} />
+            return <Fret key={fretNumber} x1={paddingLeft + x} x2={paddingLeft + x} y1={paddingTop} y2={fretHeight} />
         })}
         {range(1, displayedFretCount - 12).map(fretNumber => {
             // Above the octave
             const x = calculateFretPosition(fretNumber, fullScaleLength / 2);
 
-            return <Fret key={fretNumber} x1={200 + paddingLeft + x} x2={200 + paddingLeft + x} y1={10} y2={45} />
+            return <Fret key={fretNumber} x1={200 + paddingLeft + x} x2={200 + paddingLeft + x} y1={paddingTop} y2={fretHeight} />
         })}
 
         {[3, 5, 7, 10, 15, 17, 19, 22].filter(n => n <= displayedFretCount).map(fretNumber => {
             const fretPosition = calculateFretCenter(fretNumber);
 
-            return <Dot key={fretNumber} cx={paddingLeft + fretPosition} cy={7 * stringDistance} r={1} />;
+            return <Dot key={fretNumber} cx={paddingLeft + fretPosition} cy={fretHeight + 3} r={1} />;
         })}
 
-        <OctaveMarker cx={paddingLeft + calculateFretCenter(12)} cy={7 * stringDistance} r={1} />;
+        <OctaveMarker cx={paddingLeft + calculateFretCenter(12)} cy={fretHeight + 3} r={1} />;
     </FretboardSvg>;
 }
 
