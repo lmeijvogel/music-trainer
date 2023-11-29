@@ -26,27 +26,27 @@ export const Fretboard = ({ onNoteClick }: { onNoteClick: OnNoteClick }) => {
 
     return <svg viewBox="0 0 300 100">
         {strings.map((note, index) => (
-            <GuitarString note={note} key={note} x1={10} x2={10 + lastFretX} y={index * stringDistance + 10} onClick={onClick} />
+            <GuitarString note={note} key={note} x1={paddingLeft} x2={paddingLeft + lastFretX} y={index * stringDistance + 10} onClick={onClick} />
         ))}
         {range(0, 12).map(fretNumber => {
             const x = calculateFretPosition(fretNumber, fullScaleLength);
 
-            return <Fret key={fretNumber} x1={10 + x} x2={10 + x} y1={10} y2={45} />
+            return <Fret key={fretNumber} x1={paddingLeft + x} x2={paddingLeft + x} y1={10} y2={45} />
         })}
         {range(1, displayedFretCount - 12).map(fretNumber => {
             // Above the octave
             const x = calculateFretPosition(fretNumber, fullScaleLength / 2);
 
-            return <Fret key={fretNumber} x1={210 + x} x2={210 + x} y1={10} y2={45} />
+            return <Fret key={fretNumber} x1={200 + paddingLeft + x} x2={200 + paddingLeft + x} y1={10} y2={45} />
         })}
 
         {[3, 5, 7, 10, 15, 17, 19, 22].filter(n => n <= displayedFretCount).map(fretNumber => {
             const fretPosition = calculateFretCenter(fretNumber);
 
-            return <Dot key={fretNumber} cx={10 + fretPosition} cy={7 * stringDistance} r={1} />;
+            return <Dot key={fretNumber} cx={paddingLeft + fretPosition} cy={7 * stringDistance} r={1} />;
         })}
 
-        <OctaveMarker cx={10 + calculateFretCenter(12)} cy={7 * stringDistance} r={1} />;
+        <OctaveMarker cx={paddingLeft + calculateFretCenter(12)} cy={7 * stringDistance} r={1} />;
     </svg>;
 }
 
@@ -74,7 +74,7 @@ const GuitarString = ({ note, x1, x2, y, onClick }: { note: string, x1: number, 
 };
 
 const ClickableOpenString = ({ note, y, onClick }: { note: string, y: number, onClick: OnNoteClick }) => {
-    return <ClickableFret note={note} left={-10} right={0} y={y} onClick={onClick} />
+    return <ClickableFret note={note} left={-paddingLeft} right={0} y={y} onClick={onClick} />
 };
 
 const ClickableFret = ({ note, y, left, right, onClick }: { note: string, y: number, left: number, right: number, onClick: OnNoteClick }) => {
@@ -90,7 +90,7 @@ const ClickableFret = ({ note, y, left, right, onClick }: { note: string, y: num
 
     return <ClickableFretSvg
         onClick={onRectClicked}
-        x={left + 10}
+        x={left + paddingLeft}
         y={y - stringDistance / 2}
         width={right - left}
         height={stringDistance}
