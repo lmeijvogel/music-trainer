@@ -6,7 +6,7 @@ import { calculateFretPosition } from "./calculateFretPosition";
 const stringDistance = 7;
 const fullScaleLength = 400;
 
-const displayedFretCount = 15;
+const displayedFretCount = 12;
 
 const paddingLeft = 20;
 type OnNoteClick = (note: string) => "good" | "bad" | undefined;
