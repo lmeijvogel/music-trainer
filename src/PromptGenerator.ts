@@ -29,19 +29,27 @@ export class PromptGenerator {
     makeRandomPrompt(): Prompt {
         const keySignature = this.pickRandomKeySignature();
 
+        const note = this.pickRandomNote(keySignature);
+
+        const correctedNote = this.correctAccidentals(note, keySignature);
+
+        return this.ctor(keySignature, correctedNote);
+    }
+
+    private pickRandomKeySignature() {
+        const sigs = this.allowedKeySignatures;
+
+        const randomIndex = Math.floor(Math.random() * sigs.length);
+
+        return sigs[randomIndex];
+    }
+
+    private pickRandomNote(keySignature: string) {
         const candidateNotes = this.candidateNotes(keySignature);
 
         const randomIndex = Math.floor(Math.random() * candidateNotes.length);
 
-        const note = candidateNotes[randomIndex];
-
-        const key = Key.majorKey(keySignature);
-
-        const differentAccidentals = Note.get(note).acc.startsWith("#") && key.alteration < 0;
-
-        const correctedNote = differentAccidentals ? Note.enharmonic(note) : note;
-
-        return this.ctor(keySignature, correctedNote);
+        return candidateNotes[randomIndex];
     }
 
     private candidateNotes(keySignature: string): string[] {
@@ -57,12 +65,13 @@ export class PromptGenerator {
         return [...allNotes, ...notesWithAccidentals];
     }
 
-    private pickRandomKeySignature() {
-        const sigs = this.allowedKeySignatures;
 
-        const randomIndex = Math.floor(Math.random() * sigs.length);
+    private correctAccidentals(note: string, keySignature: string) {
+        const key = Key.majorKey(keySignature);
 
-        return sigs[randomIndex];
+        const accidentalsAreDifferent = (Note.get(note).acc.startsWith("#") && key.alteration < 0) ||
+            (Note.get(note).acc.startsWith("b") && key.alteration > 0);
+        return accidentalsAreDifferent ? Note.enharmonic(note) : note;
     }
 }
 
