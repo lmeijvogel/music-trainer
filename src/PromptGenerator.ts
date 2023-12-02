@@ -1,7 +1,7 @@
 import { Key, Note, Scale } from "tonal";
 import { Prompt } from "./prompts/Prompt";
 
-export class PromptGenerator {
+export abstract class PromptGenerator {
     private prompt: Prompt | undefined;
 
     /**
@@ -11,7 +11,6 @@ export class PromptGenerator {
         private readonly allowedKeySignatures: string[],
         private readonly lowestNote: string,
         private readonly highestNote: string,
-        private readonly ctor: (keySignature: string, note: string) => Prompt,
         private readonly preventRepetitions = true) { }
 
     next(): Prompt {
@@ -26,17 +25,9 @@ export class PromptGenerator {
         return this.prompt;
     }
 
-    makeRandomPrompt(): Prompt {
-        const keySignature = this.pickRandomKeySignature();
+    abstract makeRandomPrompt(): Prompt;
 
-        const note = this.pickRandomNote(keySignature);
-
-        const correctedNote = this.correctAccidentals(note, keySignature);
-
-        return this.ctor(keySignature, correctedNote);
-    }
-
-    private pickRandomKeySignature() {
+    protected pickRandomKeySignature() {
         const sigs = this.allowedKeySignatures;
 
         const randomIndex = Math.floor(Math.random() * sigs.length);
@@ -44,7 +35,7 @@ export class PromptGenerator {
         return sigs[randomIndex];
     }
 
-    private pickRandomNote(keySignature: string) {
+    protected pickRandomNote(keySignature: string) {
         const candidateNotes = this.candidateNotes(keySignature);
 
         const randomIndex = Math.floor(Math.random() * candidateNotes.length);
@@ -52,7 +43,7 @@ export class PromptGenerator {
         return candidateNotes[randomIndex];
     }
 
-    private candidateNotes(keySignature: string): string[] {
+    protected candidateNotes(keySignature: string): string[] {
         if (this.lowestNote === this.highestNote) return [this.lowestNote];
 
         const range = Scale.rangeOf(`${keySignature} major`);
@@ -66,7 +57,7 @@ export class PromptGenerator {
     }
 
 
-    private correctAccidentals(note: string, keySignature: string) {
+    protected correctAccidentals(note: string, keySignature: string) {
         const key = Key.majorKey(keySignature);
 
         const accidentalsAreDifferent = (Note.get(note).acc.startsWith("#") && key.alteration < 0) ||

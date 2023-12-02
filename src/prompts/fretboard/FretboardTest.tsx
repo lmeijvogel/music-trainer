@@ -1,23 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { correctForKey } from "../../helpers/correctForKey";
-import { PromptGenerator } from "../../PromptGenerator";
+import { FretboardPromptGenerator } from "./FretboardPromptGenerator";
 import { Prompt } from "../Prompt";
 import { SingleNoteStave } from "../SingleNoteStave";
 import { Fretboard } from "./Fretboard";
-import { FretboardPrompt } from "./FretboardPrompt";
 
 const keys = ["C", "F", "Bb", "Eb", "G", "D", "A", "E"];
 
 export const FretboardTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const promptGenerator = useMemo(() => new PromptGenerator(
+    const promptGenerator = useMemo(() => new FretboardPromptGenerator(
         keys,
         "E3",
         "A5",
-        (keySignature: string, note: string) => new FretboardPrompt(keySignature, note), false)
-        , []);
+    ), []);
 
     const [prompt, setPrompt] = useState<Prompt>(promptGenerator.next());
 

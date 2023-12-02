@@ -1,20 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { InputField } from "../../InputField";
-import { PromptGenerator } from "../../PromptGenerator";
+import { SingleNotePromptGenerator } from "./SingleNotePromptGenerator";
 import { Prompt } from "../Prompt";
-import { SingleNotePrompt } from "./SingleNotePrompt";
 import { SingleNoteStave } from "../SingleNoteStave";
 
 export const SingleNoteTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const promptGenerator = useMemo(() => new PromptGenerator(
+    const promptGenerator = useMemo(() => new SingleNotePromptGenerator(
         ["C", "F", "Bb", "Eb", "G", "D", "A", "E"],
         "E3",
-        "A5",
-        (keySignature: string, note: string) => new SingleNotePrompt(keySignature, note))
-        , []);
+        "A5"
+    ), []);
 
     const [prompt, setPrompt] = useState<Prompt>(promptGenerator.next());
 
