@@ -9,8 +9,8 @@ export abstract class PromptGenerator {
      */
     constructor(
         private readonly allowedKeySignatures: string[],
-        private readonly lowestNote: string,
-        private readonly highestNote: string,
+        protected readonly lowestNote: string,
+        protected readonly highestNote: string,
         private readonly preventRepetitions = true) { }
 
     next(): Prompt {

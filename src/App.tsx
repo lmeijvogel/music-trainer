@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import { SingleNoteTest } from './prompts/singleNote/SingleNoteTest';
 import { useState } from 'react';
 import { FretboardTest } from './prompts/fretboard/FretboardTest';
+import { IntervalTest } from './prompts/interval/IntervalTest';
 
-type Category = "singleNote" | "fretboard";
+type Category = "singleNote" | "fretboard" | "interval";
 
 function App() {
-    const [category, setCategory] = useState<Category>("fretboard");
+    const [category, setCategory] = useState<Category>("interval");
 
     return (
         <div className="App">
@@ -18,13 +19,15 @@ function App() {
                 <MenuItem>
                     <Button active={category === "fretboard"} onClick={() => setCategory("fretboard")}>Fretboard</Button>
                 </MenuItem>
+                <MenuItem>
+                    <Button active={category === "interval"} onClick={() => setCategory("interval")}>Interval</Button>
+                </MenuItem>
             </MenuBar>
 
             {category === "singleNote" ? (
                 <SingleNoteTest />
-            ) : <>
-                <FretboardTest />
-            </>}
+            ) : (category === "fretboard" ? <FretboardTest /> : <IntervalTest />)
+            }
         </div >
     );
 }
