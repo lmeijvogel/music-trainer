@@ -14,13 +14,13 @@ export abstract class PromptGenerator {
         private readonly preventRepetitions = true) { }
 
     next(): Prompt {
-        const newPrompt = this.makeRandomPrompt();
+        let newPrompt = this.makeRandomPrompt();
 
-        if (this.preventRepetitions && newPrompt.equals(this.prompt)) {
-            return this.next();
+        while (this.preventRepetitions && newPrompt.equals(this.prompt)) {
+            newPrompt = this.makeRandomPrompt();
         }
 
-        this.prompt = this.makeRandomPrompt();
+        this.prompt = newPrompt;
 
         return this.prompt;
     }
