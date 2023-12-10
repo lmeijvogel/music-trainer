@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 type Props = {
     onSubmit: (input: string) => void;
-    validator: (input: string) => boolean;
+    validator?: (input: string) => boolean;
 };
 
 export const InputField = forwardRef(({ onSubmit, validator }: Props, ref) => {
@@ -14,7 +14,7 @@ export const InputField = forwardRef(({ onSubmit, validator }: Props, ref) => {
     const [input, setInput] = useState("");
 
     const isValidNote = useCallback((input: string) => {
-        return validator(input);
+        return !validator || validator(input);
     }, [validator]);
 
     const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback((event) => {
