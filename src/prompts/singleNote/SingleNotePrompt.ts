@@ -1,5 +1,5 @@
 import { Note } from "tonal";
-import { Prompt } from "../Prompt";
+import { NotesPerBeat, Prompt } from "../Prompt";
 
 export class SingleNotePrompt extends Prompt {
     constructor(keySignature: string, readonly note: string) {
@@ -7,11 +7,14 @@ export class SingleNotePrompt extends Prompt {
     }
 
     check(answer: string) {
-        return answer.toLowerCase() === Note.pitchClass(this.note).toLowerCase();
+        if (answer.toLowerCase() === Note.pitchClass(this.note).toLowerCase())
+            return undefined;
+
+        return `Wrong answer: You answered ${answer} while the answer was ${Note.pitchClass(this.note)}.`;
     }
 
-    toVex(): string {
-        return `${Note.pitchClass(this.note)}/${Note.octave(this.note)}`;
+    toVex(): NotesPerBeat[] {
+        return [new NotesPerBeat([this.note])];
     }
 
     equals(other: Prompt | undefined) {

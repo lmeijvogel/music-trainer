@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { correctForKey } from "../../helpers/correctForKey";
 import { FretboardPromptGenerator } from "./FretboardPromptGenerator";
 import { Prompt } from "../Prompt";
 import { SingleNoteStave } from "../SingleNoteStave";
@@ -30,13 +29,15 @@ export const FretboardTest = () => {
     }, [inputRef]);
 
     const onSubmitInput = useCallback((input: string) => {
-        if (prompt.check(input)) {
+        const check = prompt.check(input);
+
+        if (check) {
+            setErrorMessage(check);
+            return "bad";
+        } else {
             setPrompt(promptGenerator.next());
             setErrorMessage(undefined);
             return "good";
-        } else {
-            setErrorMessage(`You answered ${correctForKey(input, prompt.keySignature)}, but the note is ${prompt.toString()}.`);
-            return "bad";
         }
     }, [prompt, promptGenerator]);
 

@@ -26,9 +26,17 @@ export const SingleNoteStave: React.FC<Props> = ({ prompt }) => {
         stave.addClef("treble").addKeySignature(prompt.keySignature);
 
         stave.setContext(context).draw();
-        const note = new vf.StaveNote({ keys: [`${prompt.toVex()}`], duration: "1", auto_stem: true }).setCenterAlignment(true);
+        const beats = prompt.toVex().map(notesPerBeat => notesPerBeat.toVex());
 
-        vf.Formatter.FormatAndDraw(context, stave, [note]);
+        const notes = beats.map(keys => new vf.StaveNote({ keys, duration: "1", auto_stem: true }).setCenterAlignment(true));
+
+        const voice = new vf.Voice({ num_beats: 4, beat_value: 4 }).addTickables(notes);
+
+        vf.Accidental.applyAccidentals([voice], prompt.keySignature);
+
+        new vf.Formatter().joinVoices([voice]).format([voice], 150);
+
+        voice.draw(context, stave);
     }, [ref, prompt]);
 
     return <div ref={ref} />

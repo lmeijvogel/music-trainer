@@ -27,11 +27,12 @@ export const SingleNoteTest = () => {
     }, [inputRef]);
 
     const onSubmitInput = useCallback((input: string) => {
-        if (prompt.check(input)) {
+        const check = prompt.check(input);
+        if (check) {
+            setErrorMessage(check);
+        } else {
             setPrompt(promptGenerator.next());
             setErrorMessage(undefined);
-        } else {
-            setErrorMessage(`Wrong, the note was ${prompt.toString()}.`);
         }
     }, [prompt, promptGenerator]);
 

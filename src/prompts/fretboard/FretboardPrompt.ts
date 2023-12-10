@@ -1,20 +1,22 @@
-import { Note } from "tonal";
 import { correctForKey } from "../../helpers/correctForKey";
-import { Prompt } from "../Prompt";
+import { NotesPerBeat, Prompt } from "../Prompt";
 
 export class FretboardPrompt extends Prompt {
     constructor(keySignature: string, readonly note: string) {
         super(keySignature);
     }
 
-    check(answer: string) {
-        const correctedAnswer = correctForKey(answer, this.keySignature);
+    check(input: string) {
+        const correctedInput = correctForKey(input, this.keySignature);
 
-        return this.note === correctedAnswer;
+        if (this.note === correctedInput)
+            return undefined;
+
+        return `Answer was ${this.note}, you answered ${correctedInput}.`;
     }
 
-    toVex(): string {
-        return `${Note.pitchClass(this.note)}/${Note.octave(this.note)}`;
+    toVex(): NotesPerBeat[] {
+        return [new NotesPerBeat([this.note])];
     }
 
     equals(other: Prompt | undefined) {
