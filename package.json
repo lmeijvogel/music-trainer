@@ -23,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "npm run build && rsync --verbose --recursive build/ 192.168.2.1:/var/docker/nginx/www/gitaar/"
   },
   "eslintConfig": {
     "extends": [
