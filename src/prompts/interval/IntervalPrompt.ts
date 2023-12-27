@@ -12,7 +12,7 @@ export class IntervalPrompt extends Prompt {
         if (checkIntervalInput(input.trim(), answer))
             return undefined;
 
-        return `Answer is ${answer} (${this.notes[0]} -> ${this.notes[1]}), but you answered ${input}`;
+        return `Answer is ${this.intervalToString(answer)} (${this.notes[0]} -> ${this.notes[1]}), but you answered ${this.intervalToString(input)}`;
 
     }
     toVex(): NotesPerBeat[] {
@@ -30,6 +30,78 @@ export class IntervalPrompt extends Prompt {
         }
 
         return true;
+    }
+
+    intervalToString(intervalToParse: string): string {
+        const parsedInterval = this.parseInterval(intervalToParse);
+
+        if (!parsedInterval) return intervalToParse;
+
+        const { interval, modifier } = parsedInterval;
+
+        return `${this.modifierToString(modifier)} ${this.numberToString(interval)}`;
+    }
+
+    parseInterval(interval: string): { interval: number, modifier: string } | undefined {
+        const intervalFirstMatch = interval.match(/^(\d+)(.*)$/);
+
+        if (intervalFirstMatch) {
+            const interval = parseInt(intervalFirstMatch[1]);
+            const modifier = intervalFirstMatch[2];
+
+            return {
+                interval,
+                modifier
+            };
+        }
+
+        const intervalLastMatch = interval.match(/^([A-Za-z]*)(\d+)$/);
+
+        if (intervalLastMatch) {
+            const modifier = intervalLastMatch[1];
+            const interval = parseInt(intervalLastMatch[2]);
+
+            return {
+                interval,
+                modifier
+            };
+        }
+
+        return undefined;
+    }
+
+    numberToString(nr: number): string {
+        let postfix = "th";
+        switch (nr) {
+            case 1:
+                postfix = "st";
+                break;
+            case 2:
+                postfix = "nd";
+                break;
+            case 3:
+                postfix = "rd";
+                break;
+        }
+
+        return `${nr}${postfix}`;
+    }
+
+    modifierToString(modifier: string): string {
+        switch (modifier) {
+            case "A":
+            case "a":
+                return "Augmented";
+            case "D":
+            case "d":
+                return "Diminished";
+            case "m":
+                return "Minor";
+            case "M":
+                return "Major"
+            default:
+                return "Perfect";
+        }
     }
 
     toString() {
