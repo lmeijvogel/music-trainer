@@ -37,7 +37,7 @@ export const IntervalTest = () => {
     }, [prompt, promptGenerator]);
 
     return (<div tabIndex={0} onClick={onAppClick}>
-        <ErrorDisplay visible={!!errorMessage}>{errorMessage ?? " "}</ErrorDisplay>
+        <ErrorDisplay $visible={!!errorMessage}>{errorMessage ?? " "}</ErrorDisplay>
         <SingleNoteStave prompt={prompt} />
 
         <InputField ref={inputRef} onSubmit={onSubmitInput} />
@@ -45,9 +45,9 @@ export const IntervalTest = () => {
     );
 }
 
-const ErrorDisplay = styled.div<{ visible: boolean; }>`
+const ErrorDisplay = styled.div<{ $visible: boolean; }>`
     background-color: red;
     color: black;
-    visibility: ${(props) => props.visible ? "visible" : "hidden"};
+    visibility: ${(props) => props.$visible ? "visible" : "hidden"};
 `;
 

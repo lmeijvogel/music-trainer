@@ -14,13 +14,13 @@ function App() {
         <div className="App">
             <MenuBar>
                 <MenuItem>
-                    <Button active={category === "singleNote"} onClick={() => setCategory("singleNote")}>Single note</Button>
+                    <Button $isActive={category === "singleNote"} onClick={() => setCategory("singleNote")}>Single note</Button>
                 </MenuItem>
                 <MenuItem>
-                    <Button active={category === "fretboard"} onClick={() => setCategory("fretboard")}>Fretboard</Button>
+                    <Button $isActive={category === "fretboard"} onClick={() => setCategory("fretboard")}>Fretboard</Button>
                 </MenuItem>
                 <MenuItem>
-                    <Button active={category === "interval"} onClick={() => setCategory("interval")}>Interval</Button>
+                    <Button $isActive={category === "interval"} onClick={() => setCategory("interval")}>Interval</Button>
                 </MenuItem>
             </MenuBar>
 
@@ -51,8 +51,8 @@ const MenuItem = styled.li`
     padding-left: 10px;
 `;
 
-const Button = styled.button<{ active: boolean }>`
-    background-color: ${props => props.active ? "white" : "#dddddd"};
+const Button = styled.button<{ $isActive: boolean }>`
+    background-color: ${props => props.$isActive ? "white" : "#dddddd"};
     border: 0px;
     padding: 8px;
 `;
