@@ -1,4 +1,4 @@
-import React, { forwardRef, KeyboardEventHandler, useCallback, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, KeyboardEventHandler, useCallback, useImperativeHandle, useRef, useState } from "react";
 import styled from "styled-components";
 
 type Props = {
@@ -28,7 +28,7 @@ export const InputField = forwardRef(({ onSubmit, validator }: Props, ref) => {
     }, [input, isValidNote, onSubmit]);
 
 
-    return <UserInput type="text" ref={inputRef} onKeyDown={onKeyDown} value={input} onInput={e => setInput((e.target as any).value)} />;
+    return <UserInput type="text" ref={inputRef} onKeyDown={onKeyDown} value={input} onInput={e => setInput((e.target as HTMLInputElement).value)} />;
 })
 
 
