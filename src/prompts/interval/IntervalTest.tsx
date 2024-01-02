@@ -4,10 +4,16 @@ import { InputField } from "../../InputField";
 import { IntervalPromptGenerator } from "./IntervalPromptGenerator";
 import { Prompt } from "../Prompt";
 import { SingleNoteStave } from "../SingleNoteStave";
+import { ResponseButtons } from "./ResponseButtons";
+import { IntervalPrompt } from "./IntervalPrompt";
+import { HardLink } from "../../HardLink";
+import { useMobileDisplay } from "../../hooks/useMobileDisplay";
 import { ErrorDisplay } from "../../ErrorDisplay";
 
 export const IntervalTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const isMobileDisplay = useMobileDisplay();
 
     const promptGenerator = useMemo(() => new IntervalPromptGenerator(
         ["C", "F", "Bb", "Eb", "G", "D", "A", "E"],
@@ -24,8 +30,8 @@ export const IntervalTest = () => {
     }, [inputRef]);
 
     const onAppClick = useCallback(() => {
-        inputRef.current?.focus();
-    }, [inputRef]);
+        if (!isMobileDisplay) inputRef.current?.focus();
+    }, [inputRef, isMobileDisplay]);
 
     const onSubmitInput = useCallback((input: string) => {
         const check = prompt.check(input);
@@ -37,11 +43,18 @@ export const IntervalTest = () => {
         }
     }, [prompt, promptGenerator]);
 
-    return (<div tabIndex={0} onClick={onAppClick}>
+    return (<TestContainer tabIndex={0} onClick={onAppClick}>
         <ErrorDisplay text={errorMessage} />
         <SingleNoteStave prompt={prompt} />
 
-        <InputField ref={inputRef} onSubmit={onSubmitInput} />
-    </div>
+        <ResponseButtons onClick={onSubmitInput} />
+        {isMobileDisplay ? null : <InputField ref={inputRef} onSubmit={onSubmitInput} />}
+    </TestContainer>
     );
 }
+
+const TestContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
