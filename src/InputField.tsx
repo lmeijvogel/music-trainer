@@ -35,4 +35,6 @@ export const InputField = forwardRef(({ onSubmit, validator }: Props, ref) => {
 const UserInput = styled.input`
     background-color: transparent;
     border-radius: 3px;
+
+    margin: 10px;
 `;
