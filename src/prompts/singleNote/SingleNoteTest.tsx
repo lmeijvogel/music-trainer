@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
 import { InputField } from "../../InputField";
 import { SingleNotePromptGenerator } from "./SingleNotePromptGenerator";
 import { Prompt } from "../Prompt";
 import { SingleNoteStave } from "../SingleNoteStave";
+import { ErrorDisplay } from "../../ErrorDisplay";
 
 export const SingleNoteTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -37,16 +37,10 @@ export const SingleNoteTest = () => {
     }, [prompt, promptGenerator]);
 
     return (<div tabIndex={0} onClick={onAppClick}>
-        <ErrorDisplay visible={!!errorMessage}>{errorMessage ?? " "}</ErrorDisplay>
+        <ErrorDisplay text={errorMessage} />
         <SingleNoteStave prompt={prompt} />
 
         <InputField ref={inputRef} onSubmit={onSubmitInput} validator={(note: string) => !!note.match(/[A-Ga-g]/)} />
     </div>
     );
 }
-
-const ErrorDisplay = styled.div<{ visible: boolean; }>`
-    background-color: red;
-    color: black;
-    visibility: ${(props) => props.visible ? "visible" : "hidden"};
-`;

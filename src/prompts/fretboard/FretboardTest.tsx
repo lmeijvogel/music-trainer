@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
 import { FretboardPromptGenerator } from "./FretboardPromptGenerator";
 import { Prompt } from "../Prompt";
 import { SingleNoteStave } from "../SingleNoteStave";
 import { Fretboard } from "./Fretboard";
+import { ErrorDisplay } from "../../ErrorDisplay";
 
 const keys = ["C", "F", "Bb", "Eb", "G", "D", "A", "E"];
 
@@ -42,18 +42,9 @@ export const FretboardTest = () => {
     }, [prompt, promptGenerator]);
 
     return (<div tabIndex={0} onClick={onAppClick}>
-        <ErrorDisplay visible={!!errorMessage}>{errorMessage ?? " "}</ErrorDisplay>
+        <ErrorDisplay text={errorMessage} />
         <SingleNoteStave prompt={prompt} />
         <Fretboard onNoteClick={onSubmitInput} />
     </div>
     );
 }
-
-const ErrorDisplay = styled.div<{ visible: boolean; }>`
-    background-color: red;
-    color: black;
-    line-height: 1.5em;
-    height: 1.5em;
-    visibility: ${(props) => props.visible ? "visible" : "hidden"};
-`;
-
