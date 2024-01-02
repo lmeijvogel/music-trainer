@@ -1,7 +1,12 @@
 import { Note } from "tonal";
 import { NotesPerBeat, Prompt } from "../Prompt";
+import { SingleNoteTestSpec } from "../../helpers/locationBarHelpers";
 
 export class SingleNotePrompt extends Prompt {
+    static fromTestSpec(testSpec: SingleNoteTestSpec): Prompt | (() => Prompt) {
+        return new SingleNotePrompt(testSpec.keySignature, testSpec.note);
+    }
+
     constructor(keySignature: string, readonly note: string) {
         super(keySignature);
     }
@@ -15,6 +20,14 @@ export class SingleNotePrompt extends Prompt {
 
     toVex(): NotesPerBeat[] {
         return [new NotesPerBeat([this.note])];
+    }
+
+    toTestSpec(): SingleNoteTestSpec {
+        return {
+            type: "singleNote",
+            keySignature: this.keySignature,
+            note: this.note
+        };
     }
 
     equals(other: Prompt | undefined) {

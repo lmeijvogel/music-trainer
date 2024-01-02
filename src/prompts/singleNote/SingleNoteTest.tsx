@@ -3,10 +3,18 @@ import { InputField } from "../../InputField";
 import { SingleNotePromptGenerator } from "./SingleNotePromptGenerator";
 import { Prompt } from "../Prompt";
 import { SingleNoteStave } from "../SingleNoteStave";
+import { TestSpec, parseLocationBar } from "../../helpers/locationBarHelpers";
+import { SingleNotePrompt } from "./SingleNotePrompt";
+import { HardLink } from "../../HardLink";
+import { useMobileDisplay } from "../../hooks/useMobileDisplay";
 import { ErrorDisplay } from "../../ErrorDisplay";
 
 export const SingleNoteTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const [testSpec, setTestSpec] = useState<TestSpec | undefined>(parseLocationBar(window.location));
+
+    const isMobileDisplay = useMobileDisplay();
 
     const promptGenerator = useMemo(() => new SingleNotePromptGenerator(
         ["C", "F", "Bb", "Eb", "G", "D", "A", "E"],
@@ -14,13 +22,13 @@ export const SingleNoteTest = () => {
         "A5"
     ), []);
 
-    const [prompt, setPrompt] = useState<Prompt>(promptGenerator.next());
+    const [prompt, setPrompt] = useState<Prompt>(testSpec?.type === "singleNote" ? SingleNotePrompt.fromTestSpec(testSpec) : promptGenerator.next());
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
     useEffect(() => {
-        inputRef.current?.focus();
-    }, [inputRef]);
+        if (!isMobileDisplay) inputRef.current?.focus();
+    }, [inputRef, isMobileDisplay]);
 
     const onAppClick = useCallback(() => {
         inputRef.current?.focus();
@@ -31,10 +39,10 @@ export const SingleNoteTest = () => {
         if (check) {
             setErrorMessage(check);
         } else {
-            setPrompt(promptGenerator.next());
+            if (!testSpec) setPrompt(promptGenerator.next());
             setErrorMessage(undefined);
         }
-    }, [prompt, promptGenerator]);
+    }, [prompt, promptGenerator, testSpec]);
 
     return (<div tabIndex={0} onClick={onAppClick}>
         <ErrorDisplay text={errorMessage} />

@@ -1,4 +1,5 @@
 import { Note } from "tonal";
+import { TestSpec } from "../helpers/locationBarHelpers";
 
 export abstract class Prompt {
     constructor(readonly keySignature: string) {}
@@ -6,6 +7,8 @@ export abstract class Prompt {
     abstract check(answer: string): string | undefined;
 
     abstract toVex(): NotesPerBeat[];
+
+    abstract toTestSpec(): TestSpec;
 
     abstract equals(other: Prompt | undefined): boolean;
 }

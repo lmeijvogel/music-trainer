@@ -1,22 +1,20 @@
 import { Key, Note, Scale } from "tonal";
 import { Prompt } from "./prompts/Prompt";
+import { parseLocationBar } from "./helpers/locationBarHelpers";
 
 export abstract class PromptGenerator {
     private prompt: Prompt | undefined;
 
-    /**
-     * @param preventRepetitions If true, make sure that the same prompt is not repeated. Set this to false when restricting the input to a single note.
-     */
     constructor(
         private readonly allowedKeySignatures: string[],
         protected readonly lowestNote: string,
-        protected readonly highestNote: string,
-        private readonly preventRepetitions = true) { }
+        protected readonly highestNote: string) { }
 
     next(): Prompt {
         let newPrompt = this.makeRandomPrompt();
 
-        while (this.preventRepetitions && newPrompt.equals(this.prompt)) {
+        // If window.location.hash exists, that means that the prompt is fixed.
+        while (!window.location.hash && newPrompt.equals(this.prompt)) {
             newPrompt = this.makeRandomPrompt();
         }
 
@@ -28,6 +26,12 @@ export abstract class PromptGenerator {
     abstract makeRandomPrompt(): Prompt;
 
     protected pickRandomKeySignature() {
+        const testSpec = parseLocationBar(window.location);
+
+        if (testSpec?.keySignature) {
+            return testSpec.keySignature;
+        }
+
         const sigs = this.allowedKeySignatures;
 
         const randomIndex = Math.floor(Math.random() * sigs.length);

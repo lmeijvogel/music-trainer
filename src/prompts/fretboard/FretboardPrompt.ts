@@ -1,7 +1,12 @@
 import { correctForKey } from "../../helpers/correctForKey";
+import { FretboardTestSpec } from "../../helpers/locationBarHelpers";
 import { NotesPerBeat, Prompt } from "../Prompt";
 
 export class FretboardPrompt extends Prompt {
+    static fromTestSpec(testSpec: FretboardTestSpec): Prompt | (() => Prompt) {
+        return new FretboardPrompt(testSpec.keySignature, testSpec.note);
+    }
+
     constructor(keySignature: string, readonly note: string) {
         super(keySignature);
     }
@@ -17,6 +22,14 @@ export class FretboardPrompt extends Prompt {
 
     toVex(): NotesPerBeat[] {
         return [new NotesPerBeat([this.note])];
+    }
+
+    toTestSpec(): FretboardTestSpec {
+        return {
+            type: "fretboard",
+            keySignature: this.keySignature,
+            note: this.note
+        };
     }
 
     equals(other: Prompt | undefined) {

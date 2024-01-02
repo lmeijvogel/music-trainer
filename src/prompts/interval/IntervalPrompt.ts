@@ -1,8 +1,13 @@
 import { Interval } from "tonal";
 import { NotesPerBeat, Prompt } from "../Prompt";
 import { checkIntervalInput } from "./checkIntervalInput";
+import { IntervalTestSpec } from "../../helpers/locationBarHelpers";
 
 export class IntervalPrompt extends Prompt {
+    static fromTestSpec(testSpec: IntervalTestSpec): Prompt | (() => Prompt) {
+        return new IntervalPrompt(testSpec.keySignature, testSpec.notes);
+    }
+
     constructor(keySignature: string, private readonly notes: string[]) {
         super(keySignature);
     }
@@ -18,6 +23,15 @@ export class IntervalPrompt extends Prompt {
     toVex(): NotesPerBeat[] {
         return [new NotesPerBeat(this.notes)];
     }
+
+    toTestSpec(): IntervalTestSpec {
+        return {
+            type: "interval",
+            keySignature: this.keySignature,
+            notes: this.notes
+        };
+    }
+
     equals(other: Prompt | undefined): boolean {
         if (!(other instanceof IntervalPrompt)) return false;
 

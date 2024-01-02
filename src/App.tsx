@@ -4,11 +4,16 @@ import { SingleNoteTest } from './prompts/singleNote/SingleNoteTest';
 import { useState } from 'react';
 import { FretboardTest } from './prompts/fretboard/FretboardTest';
 import { IntervalTest } from './prompts/interval/IntervalTest';
+import { parseLocationBar } from './helpers/locationBarHelpers';
 
 type Category = "singleNote" | "fretboard" | "interval";
 
+const defaultCategory: Category = "interval";
+
 function App() {
-    const [category, setCategory] = useState<Category>("interval");
+    const testSpec = parseLocationBar(window.location);
+
+    const [category, setCategory] = useState<Category>(testSpec?.type || defaultCategory);
 
     return (
         <div className="App">
