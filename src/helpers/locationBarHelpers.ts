@@ -23,43 +23,45 @@ export type TestSpec = SingleNoteTestSpec | FretboardTestSpec | IntervalTestSpec
 export function parseLocationBar(location: WithHash): TestSpec | undefined {
     if (!location.hash.startsWith("#")) return undefined;
 
-    const typeMatch = location.hash.match(/type=([^&]*)/);
-    if (!typeMatch) return undefined;
+    const type = getValue("type", location.hash);
 
-    const keySignatureMatch = location.hash.match(/keySignature=([^&]*)/);
+    if (!type) return undefined;
 
-    switch (typeMatch[1]) {
+    const keySignature = getValue("keySignature", location.hash);
+
+    switch (type) {
         case "singleNote": {
-            const noteMatch = location.hash.match(/note=([^&]*)/);
+            const note = getValue("note", location.hash);
 
-            if (!keySignatureMatch || !noteMatch) return undefined;
+            if (!keySignature || !note) return undefined;
 
             return {
                 type: "singleNote",
-                keySignature: keySignatureMatch[1],
-                note: noteMatch[1]
+                keySignature,
+                note
             }
         }
         case "fretboard": {
-            const noteMatch = location.hash.match(/note=([^&]*)/);
+            const note = getValue("note", location.hash);
 
-            if (!keySignatureMatch || !noteMatch) return undefined;
+            if (!keySignature || !note) return undefined;
+
 
             return {
                 type: "fretboard",
-                keySignature: keySignatureMatch[1],
-                note: noteMatch[1]
+                keySignature,
+                note
             }
         }
         case "interval": {
-            const notesMatch = location.hash.match(/notes=([^&]*)/);
+            const notes = getValue("notes", location.hash);
 
-            if (!keySignatureMatch || !notesMatch) return undefined;
+            if (!keySignature || !notes) return undefined;
 
             return {
                 type: "interval",
-                keySignature: keySignatureMatch[1],
-                notes: notesMatch[1].split(",")
+                keySignature,
+                notes: notes.split(",")
             }
         }
         default:
@@ -70,4 +72,12 @@ export function parseLocationBar(location: WithHash): TestSpec | undefined {
 
 export function toLocationBar(testSpec: TestSpec): string {
     return Object.entries(testSpec).map(([key, value]) => `${key}=${value}`).join("&");
+}
+
+function getValue(key: string, hash: string): string | undefined {
+    const match = hash.match(new RegExp(`${key}=([^&]*)`));
+
+    if (!match) return undefined;
+
+    return match[1];
 }
