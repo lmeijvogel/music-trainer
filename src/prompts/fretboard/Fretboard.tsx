@@ -46,7 +46,7 @@ export const Fretboard = ({ onNoteClick }: { onNoteClick: OnNoteClick }) => {
             return <Fret key={fretNumber} x1={200 + paddingLeft + x} x2={200 + paddingLeft + x} y1={paddingTop} y2={fretHeight} />
         })}
 
-        {[3, 5, 7, 10, 15, 17, 19, 22].filter(n => n <= displayedFretCount).map(fretNumber => {
+        {[3, 5, 7, 9, 15, 17, 19, 22].filter(n => n <= displayedFretCount).map(fretNumber => {
             const fretPosition = calculateFretCenter(fretNumber);
 
             return <Dot key={fretNumber} cx={paddingLeft + fretPosition} cy={fretHeight + 3} r={1} />;
