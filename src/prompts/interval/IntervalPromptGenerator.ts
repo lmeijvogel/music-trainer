@@ -1,10 +1,9 @@
 import { Interval, Note } from "tonal";
 import { PromptGenerator } from "../../PromptGenerator";
-import { Prompt } from "../Prompt";
 import { IntervalPrompt } from "./IntervalPrompt";
 
-export class IntervalPromptGenerator extends PromptGenerator {
-    makeRandomPrompt(): Prompt {
+export class IntervalPromptGenerator extends PromptGenerator<IntervalPrompt> {
+    makeRandomPrompt(): IntervalPrompt {
         const keySignature = this.pickRandomKeySignature();
 
         return new IntervalPrompt(keySignature, this.pickRandomNotes(keySignature, 1));

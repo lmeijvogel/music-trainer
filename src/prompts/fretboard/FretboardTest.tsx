@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FretboardPromptGenerator } from "./FretboardPromptGenerator";
-import { Prompt } from "../Prompt";
 import { SingleNoteStave } from "../SingleNoteStave";
 import { Fretboard } from "./Fretboard";
 import { TestSpec, parseLocationBar } from "../../helpers/locationBarHelpers";
@@ -21,7 +20,7 @@ export const FretboardTest = () => {
         "A5",
     ), []);
 
-    const [prompt, setPrompt] = useState<Prompt>(testSpec?.type === "fretboard" ? FretboardPrompt.fromTestSpec(testSpec) : promptGenerator.next());
+    const [prompt, setPrompt] = useState<FretboardPrompt>(testSpec?.type === "fretboard" ? FretboardPrompt.fromTestSpec(testSpec) : promptGenerator.next());
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
 

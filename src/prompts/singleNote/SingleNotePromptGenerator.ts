@@ -1,9 +1,8 @@
 import { PromptGenerator } from "../../PromptGenerator";
-import { Prompt } from "../Prompt";
 import { SingleNotePrompt } from "./SingleNotePrompt";
 
-export class SingleNotePromptGenerator extends PromptGenerator {
-    makeRandomPrompt(): Prompt {
+export class SingleNotePromptGenerator extends PromptGenerator<SingleNotePrompt> {
+    makeRandomPrompt(): SingleNotePrompt {
         const keySignature = this.pickRandomKeySignature();
 
         const note = this.pickRandomNote(keySignature);

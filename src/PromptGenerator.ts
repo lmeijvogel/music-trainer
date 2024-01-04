@@ -2,15 +2,15 @@ import { Key, Note, Scale } from "tonal";
 import { Prompt } from "./prompts/Prompt";
 import { parseLocationBar } from "./helpers/locationBarHelpers";
 
-export abstract class PromptGenerator {
-    private prompt: Prompt | undefined;
+export abstract class PromptGenerator<T extends Prompt> {
+    private prompt: T | undefined;
 
     constructor(
         private readonly allowedKeySignatures: string[],
         protected readonly lowestNote: string,
         protected readonly highestNote: string) { }
 
-    next(): Prompt {
+    next(): T {
         let newPrompt = this.makeRandomPrompt();
 
         // If window.location.hash exists, that means that the prompt is fixed.
@@ -23,7 +23,7 @@ export abstract class PromptGenerator {
         return this.prompt;
     }
 
-    abstract makeRandomPrompt(): Prompt;
+    abstract makeRandomPrompt(): T;
 
     protected pickRandomKeySignature() {
         const testSpec = parseLocationBar(window.location);
