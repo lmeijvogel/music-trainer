@@ -3,11 +3,11 @@ import { FretboardTestSpec } from "../../helpers/locationBarHelpers";
 import { NotesPerBeat, Prompt } from "../Prompt";
 
 export class FretboardPrompt extends Prompt {
-    static fromTestSpec(testSpec: FretboardTestSpec): Prompt | (() => Prompt) {
-        return new FretboardPrompt(testSpec.keySignature, testSpec.note);
+    static fromTestSpec(testSpec: FretboardTestSpec): FretboardPrompt {
+        return new FretboardPrompt(testSpec.keySignature, testSpec.note, testSpec.startFret, testSpec.endFret);
     }
 
-    constructor(keySignature: string, readonly note: string) {
+    constructor(keySignature: string, readonly note: string, readonly startFret?: number, readonly endFret?: number) {
         super(keySignature);
     }
 
@@ -28,7 +28,9 @@ export class FretboardPrompt extends Prompt {
         return {
             type: "fretboard",
             keySignature: this.keySignature,
-            note: this.note
+            note: this.note,
+            startFret: this.startFret,
+            endFret: this.endFret
         };
     }
 

@@ -10,6 +10,8 @@ export type FretboardTestSpec = {
     type: "fretboard";
     keySignature: string;
     note: string;
+    startFret?: number;
+    endFret?: number;
 };
 
 export type IntervalTestSpec = {
@@ -46,11 +48,18 @@ export function parseLocationBar(location: WithHash): TestSpec | undefined {
 
             if (!keySignature || !note) return undefined;
 
+            const startFretString = getValue("startFret", location.hash);
+            const endFretString = getValue("endFret", location.hash);
+
+            const startFret = startFretString ? parseInt(startFretString) : undefined;
+            const endFret = endFretString ? parseInt(endFretString) : undefined;
 
             return {
                 type: "fretboard",
                 keySignature,
-                note
+                note,
+                startFret,
+                endFret
             }
         }
         case "interval": {

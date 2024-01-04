@@ -39,20 +39,20 @@ export abstract class PromptGenerator<T extends Prompt> {
         return sigs[randomIndex];
     }
 
-    protected pickRandomNote(keySignature: string) {
-        const candidateNotes = this.candidateNotes(keySignature);
+    protected pickRandomNote(keySignature: string, lowestNote = this.lowestNote, highestNote = this.highestNote) {
+        const candidateNotes = this.candidateNotes(keySignature, lowestNote, highestNote);
 
         const randomIndex = Math.floor(Math.random() * candidateNotes.length);
 
         return candidateNotes[randomIndex];
     }
 
-    protected candidateNotes(keySignature: string): string[] {
-        if (this.lowestNote === this.highestNote) return [this.lowestNote];
+    protected candidateNotes(keySignature: string, lowestNote: string, highestNote: string): string[] {
+        if (lowestNote === highestNote) return [lowestNote];
 
         const range = Scale.rangeOf(`${keySignature} major`);
 
-        const allNotes = range(this.lowestNote, this.highestNote).filter(isNotNull);
+        const allNotes = range(lowestNote, highestNote).filter(isNotNull);
 
         // Extra emphasis on notes with accidentals since we want to learn those
         const notesWithAccidentals = allNotes.filter(note => Note.get(note).acc !== "");

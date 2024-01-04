@@ -48,7 +48,7 @@ export const FretboardTest = () => {
     return (<div tabIndex={0} onClick={onAppClick}>
         <ErrorDisplay text={errorMessage} />
         <SingleNoteStave prompt={prompt} />
-        <Fretboard onNoteClick={onSubmitInput} />
+        <Fretboard onNoteClick={onSubmitInput} startFret={prompt.startFret} endFret={prompt.endFret} />
 
         <HardLink prompt={prompt} onClick={setTestSpec} />
     </div>
