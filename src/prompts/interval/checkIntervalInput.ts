@@ -9,7 +9,7 @@ export function checkIntervalInput(input: string, interval: string): boolean {
 export function normalizeInterval(input: string): string {
     if (["1", "4", "5"].includes(input)) {
         return `${input}P`;
-    };
+    }
 
     input = input.replace("p", "P");
 
