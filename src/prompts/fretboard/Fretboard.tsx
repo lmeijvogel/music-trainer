@@ -15,6 +15,15 @@ const paddingLeft = 40;
 const fretMarkerDistance = 6;
 const fretMarkerRadius = 1.2;
 
+const strings = ["E5", "B4", "G4", "D4", "A3", "E3"];
+const fretPadding = 1;
+const fretTop = paddingTop - fretPadding;
+
+const fretBottom = (strings.length - 1) * stringDistance + paddingTop + fretPadding;
+
+const activeRectangleTop = paddingTop - stringDistance / 2;
+const activeRectangleBottom = paddingTop + (strings.length - 0.5) * stringDistance;
+
 type OnNoteClick = (note: string) => "good" | "bad" | undefined;
 
 function calculateFretCenter(fretNumber: number): number {
@@ -31,21 +40,11 @@ type Props = {
 };
 
 export const Fretboard = ({ onNoteClick, startFret = 0, endFret = displayedFretCount }: Props) => {
-    const strings = ["E5", "B4", "G4", "D4", "A3", "E3"];
-
     const lastFretX = calculateFretPosition(displayedFretCount, fullScaleLength);
 
     const onClick = useCallback((note: string) => onNoteClick(note), [onNoteClick]);
 
     const maxStringX = paddingLeft + lastFretX;
-
-    const fretPadding = 1;
-    const fretTop = paddingTop - fretPadding;
-
-    const fretBottom = (strings.length - 1) * stringDistance + paddingTop + fretPadding;
-
-    const activeRectangleTop = paddingTop - stringDistance / 2;
-    const activeRectangleBottom = paddingTop + (strings.length - 0.5) * stringDistance;
 
     const activeRectangleLeft = calculateFretPosition(startFret - 1, fullScaleLength) + paddingLeft;
     const activeRectangleRight = calculateFretPosition(endFret, fullScaleLength) + paddingLeft;
@@ -56,8 +55,13 @@ export const Fretboard = ({ onNoteClick, startFret = 0, endFret = displayedFretC
         {drawActiveRectangle ? <ActiveRectangle x={activeRectangleLeft} y={activeRectangleTop} width={activeRectangleRight - activeRectangleLeft} height={activeRectangleBottom - activeRectangleTop} /> : null}
 
         {strings.map((note, index) => (
-            <GuitarString note={note} key={note} firstClickableFret={startFret} lastClickableFret={endFret} y={index * stringDistance + paddingTop} onClick={onClick} />
+            <GuitarString key={note} firstClickableFret={startFret} lastClickableFret={endFret} y={index * stringDistance + paddingTop} />
         ))}
+
+        {strings.map((note, index) => (
+            <ClickableGuitarStringOverlay note={note} key={note} firstClickableFret={startFret} lastClickableFret={endFret} y={index * stringDistance + paddingTop} onClick={onClick} />
+        ))}
+
         {range(0, 12).map(fretNumber => {
             const x = calculateFretPosition(fretNumber, fullScaleLength);
 
@@ -85,14 +89,31 @@ const FretboardSvg = styled.svg`
 `;
 
 type GuitarStringProps = {
-    note: string;
     y: number;
-    onClick: OnNoteClick;
-    firstClickableFret?: number;
-    lastClickableFret?: number;
+    firstClickableFret: number;
+    lastClickableFret: number;
 };
 
-const GuitarString = ({ note, y, onClick, firstClickableFret = 0, lastClickableFret = displayedFretCount }: GuitarStringProps) => {
+const GuitarString = ({ y, firstClickableFret = 0, lastClickableFret = displayedFretCount }: GuitarStringProps) => {
+    return <>
+        {range(0, displayedFretCount).map((_, position) => {
+            const fret = position + 1;
+            const xLeft = calculateFretPosition(fret - 1, fullScaleLength) + paddingLeft;
+            const xRight = calculateFretPosition(fret, fullScaleLength) + paddingLeft;
+
+            const isClickable = firstClickableFret <= fret && fret <= lastClickableFret;
+
+            return <StringLine key={position} x1={xLeft} x2={xRight} y1={y} y2={y} $clickable={isClickable} />;
+        })};
+    </>;
+};
+
+type ClickableGuitarStringOverlayProps = GuitarStringProps & {
+    note: string;
+    onClick: OnNoteClick;
+};
+
+const ClickableGuitarStringOverlay = ({ note, y, onClick, firstClickableFret, lastClickableFret }: ClickableGuitarStringOverlayProps) => {
     const getAllNotes = (note: string) => Scale.get(`${note} chromatic`).notes;
 
     const octaveHigher = Note.transposeOctaves(note, 1);
@@ -102,7 +123,7 @@ const GuitarString = ({ note, y, onClick, firstClickableFret = 0, lastClickableF
     notesOnString.shift();
 
     return <>
-        {firstClickableFret === 0 ? <ClickableOpenString y={y} note={note} onClick={onClick} /> : null}
+        {firstClickableFret === 0 ? <ClickableRectangle note={note} left={4} right={paddingLeft} y={y} onClick={onClick} /> : null}
 
         {notesOnString.map((note, position) => {
             const fret = position + 1;
@@ -110,54 +131,42 @@ const GuitarString = ({ note, y, onClick, firstClickableFret = 0, lastClickableF
             const xRight = calculateFretPosition(fret, fullScaleLength) + paddingLeft;
 
             if (firstClickableFret <= fret && fret <= lastClickableFret) {
-                return <ClickableStringSegment key={note} left={xLeft} right={xRight} y={y} note={note} onClick={onClick} />
-            } else {
-                return <StringLine key={note} x1={xLeft} x2={xRight} y1={y} y2={y} $clickable={false} />
+                return <ClickableRectangle key={note} left={xLeft} right={xRight} y={y} note={note} onClick={onClick} />
             }
         })};
     </>;
 };
 
-const ClickableOpenString = ({ note, y, onClick }: { note: string, y: number, onClick: OnNoteClick }) => {
-    return <ClickableStringSegment note={note} left={4} right={paddingLeft} y={y} onClick={onClick} renderString={false} />
-};
-
-type ClickableStringSegmentProps = {
+type ClickableRectangleProps = {
     note: string;
+    onClick: OnNoteClick;
     y: number;
     left: number;
     right: number;
-    onClick: OnNoteClick;
-    renderString?: boolean;
 };
 
-
-const ClickableStringSegment = ({ note, y, left, right, onClick, renderString = true }: ClickableStringSegmentProps) => {
+const ClickableRectangle = ({ note, y, left, right, onClick }: ClickableRectangleProps) => {
     const [clicked, setClicked] = useState<"good" | "bad" | undefined>(undefined);
 
-    const onRectClicked = () => {
+    const onRectClicked = useCallback(() => {
         setClicked(onClick(note));
 
         setTimeout(() => {
             setClicked(undefined);
         }, 0);
-    };
+    }, [note, onClick]);
 
-    return <>
-        {renderString ? <StringLine x1={left} x2={right} y1={y} y2={y} $clickable={true} /> : null}
-        <ClickableFretSvg
-            onClick={onRectClicked}
-            x={left}
-            y={y - stringDistance / 2}
-            width={right - left}
-            height={stringDistance}
-            clicked={clicked}
-        />
-    </>;
+    return <ClickableRectangleSvg
+        onClick={onRectClicked}
+        x={left}
+        y={y - stringDistance / 2}
+        width={right - left}
+        height={stringDistance}
+        clicked={clicked}
+    />
+}
 
-};
-
-const ClickableFretSvg = styled.rect<{ clicked: "good" | "bad" | undefined }>`
+const ClickableRectangleSvg = styled.rect<{ clicked: "good" | "bad" | undefined }>`
     stroke: ${props => props.clicked === "good" ? "#55ff55" : props.clicked === "bad" ? "#ff0000" : "transparent"};
     ${props => props.clicked ? "" : "transition: stroke 1s,stroke-width 1s"};
     stroke-width: ${props => props.clicked ? 1 : 0.1};
@@ -182,11 +191,13 @@ type ClickableProps = { $clickable: boolean };
 const StringLine = styled.line<ClickableProps>`
     stroke: ${props => props.$clickable ? "black" : "#ccc"};
     stroke-width: ${props => props.$clickable ? "0.8px" : "0.4px"};
+    pointer-events: none;
 `;
 
 const Fret = styled.line< ClickableProps>`
     stroke: ${props => props.$clickable ? "#666666" : "#999999"};
     stroke-width: ${props => props.$clickable ? "0.9px" : "0.7px"};
+    pointer-events: none;
 `;
 
 const Dot = styled.circle`
