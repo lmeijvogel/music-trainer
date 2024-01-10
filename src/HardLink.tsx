@@ -34,7 +34,7 @@ const StyledLink = styled.a`
     border: 1px solid #bbb;
     border-radius: 3px;
     padding: 5px;
-
+    user-select: none;
 `;
 
 
