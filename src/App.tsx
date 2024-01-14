@@ -2,13 +2,13 @@ import './App.css';
 import styled from 'styled-components';
 import { SingleNoteTest } from './prompts/singleNote/SingleNoteTest';
 import { useState } from 'react';
-import { FretboardTest } from './prompts/fretboard/FretboardTest';
+import { FretboardTest } from "./prompts/fretboard/FretboardTest";
 import { IntervalTest } from './prompts/interval/IntervalTest';
 import { parseLocationBar } from './helpers/locationBarHelpers';
 
 type Category = "singleNote" | "fretboard" | "interval";
 
-const defaultCategory: Category = "interval";
+const defaultCategory: Category = "fretboard";
 
 function App() {
     const testSpec = parseLocationBar(window.location);
