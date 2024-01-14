@@ -11,7 +11,7 @@ export function correctForKey(note: string, keySignature: string): string {
 
     if (
         (key.alteration < 0 && Note.get(note)!.acc.startsWith("#")) ||
-        (key.alteration > 0 && Note.get(note)!.acc.startsWith("b"))
+        (key.alteration >= 0 && Note.get(note)!.acc.startsWith("b"))
     ) {
         return Note.enharmonic(note);
     }

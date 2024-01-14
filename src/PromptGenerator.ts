@@ -1,4 +1,4 @@
-import { Key, Note, Scale } from "tonal";
+import { Note, Scale } from "tonal";
 import { Prompt } from "./prompts/Prompt";
 import { parseLocationBar } from "./helpers/locationBarHelpers";
 
@@ -58,15 +58,6 @@ export abstract class PromptGenerator<T extends Prompt> {
         const notesWithAccidentals = allNotes.filter(note => Note.get(note).acc !== "");
 
         return [...allNotes, ...notesWithAccidentals];
-    }
-
-
-    protected correctAccidentals(note: string, keySignature: string) {
-        const key = Key.majorKey(keySignature);
-
-        const accidentalsAreDifferent = (Note.get(note).acc.startsWith("#") && key.alteration < 0) ||
-            (Note.get(note).acc.startsWith("b") && key.alteration > 0);
-        return accidentalsAreDifferent ? Note.enharmonic(note) : note;
     }
 }
 

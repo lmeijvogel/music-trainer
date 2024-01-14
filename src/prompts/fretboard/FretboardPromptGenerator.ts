@@ -2,6 +2,7 @@ import { FretboardPrompt } from "./FretboardPrompt";
 import { PromptGenerator } from "../../PromptGenerator";
 import { StartAndEndFret, startAndEndFrets } from "./StartAndEndFret";
 import { getLowestAndHighestNotes } from "../../helpers/getLowestAndHighestNotes";
+import { correctForKey } from "../../helpers/correctForKey";
 
 export class FretboardPromptGenerator extends PromptGenerator<FretboardPrompt> {
     makeRandomPrompt(): FretboardPrompt {
@@ -13,7 +14,7 @@ export class FretboardPromptGenerator extends PromptGenerator<FretboardPrompt> {
 
         const note = this.pickRandomNote(keySignature, lowestNote, highestNote);
 
-        const correctedNote = this.correctAccidentals(note, keySignature);
+        const correctedNote = correctForKey(note, keySignature);
 
         return new FretboardPrompt(keySignature, correctedNote, fretGroup.start, fretGroup.end);
     }

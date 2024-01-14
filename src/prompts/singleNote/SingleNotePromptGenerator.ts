@@ -1,4 +1,5 @@
 import { PromptGenerator } from "../../PromptGenerator";
+import { correctForKey } from "../../helpers/correctForKey";
 import { SingleNotePrompt } from "./SingleNotePrompt";
 
 export class SingleNotePromptGenerator extends PromptGenerator<SingleNotePrompt> {
@@ -7,7 +8,7 @@ export class SingleNotePromptGenerator extends PromptGenerator<SingleNotePrompt>
 
         const note = this.pickRandomNote(keySignature);
 
-        const correctedNote = this.correctAccidentals(note, keySignature);
+        const correctedNote = correctForKey(note, keySignature);
 
         return new SingleNotePrompt(keySignature, correctedNote);
     }
