@@ -8,6 +8,8 @@ import { SingleNotePrompt } from "./SingleNotePrompt";
 import { HardLink } from "../../HardLink";
 import { useMobileDisplay } from "../../hooks/useMobileDisplay";
 import { ErrorDisplay } from "../../ErrorDisplay";
+import { NoteButtons } from "./NoteButtons";
+import styled from "styled-components";
 
 export const SingleNoteTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -44,11 +46,16 @@ export const SingleNoteTest = () => {
         }
     }, [prompt, promptGenerator, testSpec]);
 
-    return (<div tabIndex={0} onClick={onAppClick}>
+    return (<TestContainer tabIndex={0} onClick={onAppClick}>
         <ErrorDisplay text={errorMessage} />
         <SingleNoteStave prompt={prompt} />
 
-        <InputField ref={inputRef} onSubmit={onSubmitInput} validator={(note: string) => !!note.match(/[A-Ga-g]/)} />
-    </div>
+        {isMobileDisplay ? <NoteButtons keySignature={prompt.keySignature} onSubmit={onSubmitInput} /> : <InputField ref={inputRef} onSubmit={onSubmitInput} validator={(note: string) => !!note.match(/[A-Ga-g]/)} />}
+        <HardLink prompt={prompt} onClick={setTestSpec} />
+    </TestContainer>
     );
 }
+
+const TestContainer = styled.div`
+    width: 100%;
+`;
