@@ -1,4 +1,4 @@
-export const stringDistance = 10;
+export const stringDistance = 14;
 export const fullScaleLength = 800;
 export const octavePosition = fullScaleLength / 2;
 
