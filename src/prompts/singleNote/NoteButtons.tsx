@@ -24,20 +24,37 @@ type NoteButtonProps = {
 function NoteButton({ note, onClick }: NoteButtonProps) {
     const onButtonClick = useCallback(() => onClick(note), [note, onClick]);
 
-    return <StyledNoteButton onClick={onButtonClick}>{note}</StyledNoteButton>;
+    const accidentals = Note.get(note)!.acc;
+
+    // Pad with nonsense "xxx" to make it 1-based
+    const column = ["xxx", "C", "D", "E", "F", "G", "A", "B"].indexOf(note[0]);
+    const row = accidentals.startsWith("#") ? 1 : accidentals.startsWith("b") ? 3 : 2;
+
+    return <StyledNoteButton $x={column} $y={row} onClick={onButtonClick}>{note}</StyledNoteButton>;
 }
 
 const NotesContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-
-    justify-content: center;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(8, 1fr);
 
     width: 100vw;
 `;
 
-const StyledNoteButton = styled.button`
-    display: flex;
+type StyledNoteButtonProps = {
+    $x: number;
+    $y: number;
+};
+
+const StyledNoteButton = styled.button.attrs<StyledNoteButtonProps>(({ $x, $y }) => {
+    console.log({ $x, $y });
+    return {
+        style: {
+            gridColumn: $x,
+            gridRow: $y
+        }
+    };
+}) <StyledNoteButtonProps>`
     width: 100%;
     height: 10vh;
 
