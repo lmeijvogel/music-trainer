@@ -12,15 +12,15 @@ export const ResponseButtons: FC<Props> = ({ onClick }) => {
     return <Grid>
         {
             perfects.map(i => <Fragment key={i}>
-                <Cell x={i} y={1}><Button interval={`A${i}`} onClick={onClick}>{i} Aug</Button></Cell>
-                <Cell x={i} y={2}><Button interval={`${i}`} onClick={onClick}>{i}</Button></Cell>
-                <Cell x={i} y={3}><Button interval={`${i}d`} onClick={onClick}>{i} Dim</Button></Cell>
+                <Cell $x={i} $y={1}><Button interval={`A${i}`} onClick={onClick}>{i} Aug</Button></Cell>
+                <Cell $x={i} $y={2}><Button interval={`${i}`} onClick={onClick}>{i}</Button></Cell>
+                <Cell $x={i} $y={3}><Button interval={`${i}d`} onClick={onClick}>{i} Dim</Button></Cell>
             </Fragment>)
         }
         {
             regulars.map(i => <Fragment key={i}>
-                <Cell x={i} y={2}><Button interval={`M${i}`} onClick={onClick}>{i} Maj</Button></Cell>
-                <Cell x={i} y={3}><Button interval={`m${i}`} onClick={onClick}>{i} Min</Button></Cell>
+                <Cell $x={i} $y={2}><Button interval={`M${i}`} onClick={onClick}>{i} Maj</Button></Cell>
+                <Cell $x={i} $y={3}><Button interval={`m${i}`} onClick={onClick}>{i} Min</Button></Cell>
             </Fragment>)
         }</Grid>
 };
@@ -36,15 +36,15 @@ const Grid = styled.div`
 `;
 
 type CellProps = {
-    x: number;
-    y: number;
+    $x: number;
+    $y: number;
 };
 
-const Cell = styled.div.attrs<CellProps>(({ x, y }) => {
+const Cell = styled.div.attrs<CellProps>(({ $x, $y }) => {
     return {
         style: {
-            gridColumn: x,
-            gridRow: y
+            gridColumn: $x,
+            gridRow: $y
         }
     };
 }) <CellProps>``;
