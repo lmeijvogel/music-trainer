@@ -19,7 +19,7 @@ export function WithClickedFretList(): [ClickedFretWithId[], (clickedFret: Click
     const [clickedFrets, setClickedFrets] = useState<ClickedFretWithId[]>([]);
 
     const addClickedFret = (clickedFret: ClickedFret) => {
-        const randomId = crypto.randomUUID();
+        const randomId = crypto.randomUUID ? crypto.randomUUID() : Math.floor(Math.random() * 1000000000000).toString();
 
         const entryWithId = { ...clickedFret, id: randomId };
 
