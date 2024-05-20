@@ -13,6 +13,9 @@ export const ErrorDisplay = ({ text }: Props) => {
 }
 
 const StyledErrorDisplay = styled.div<{ $visible: boolean; }>`
+    position: fixed;
+    width: 100%;
+
     background-color: red;
     color: black;
     line-height: 1.5em;
