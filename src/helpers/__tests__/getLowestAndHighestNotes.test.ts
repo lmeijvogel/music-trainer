@@ -11,6 +11,6 @@ describe("getLowestAndHighestNotes", () => {
         const expectedLowestNote = "G3";
         const expectedHighestNote = "B5";
 
-        expect(getLowestAndHighestNotes(startAndEndFret)).toEqual([expectedLowestNote, expectedHighestNote]);
+        expect(getLowestAndHighestNotes(startAndEndFret, "E5", "E3")).toEqual([expectedLowestNote, expectedHighestNote]);
     });
 });

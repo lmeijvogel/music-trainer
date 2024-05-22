@@ -10,6 +10,7 @@ import { IntervalPrompt } from "./IntervalPrompt";
 import { HardLink } from "../../HardLink";
 import { useMobileDisplay } from "../../hooks/useMobileDisplay";
 import { ErrorDisplay } from "../../ErrorDisplay";
+import { findNextPrompt } from "../../helpers/promptGeneratorHelpers";
 
 export const IntervalTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -18,12 +19,11 @@ export const IntervalTest = () => {
     const isMobileDisplay = useMobileDisplay();
 
     const promptGenerator = useMemo(() => new IntervalPromptGenerator(
-        ["C", "F", "Bb", "Eb", "G", "D", "A", "E"],
         "E3",
         "A5"
     ), []);
 
-    const [prompt, setPrompt] = useState<Prompt>(testSpec?.type === "interval" ? IntervalPrompt.fromTestSpec(testSpec) : promptGenerator.next());
+    const [prompt, setPrompt] = useState<Prompt>(testSpec?.type === "interval" ? IntervalPrompt.fromTestSpec(testSpec) : findNextPrompt(promptGenerator.makeRandomPrompt, undefined));
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
@@ -40,7 +40,7 @@ export const IntervalTest = () => {
         if (check) {
             setErrorMessage(check);
         } else {
-            if (!testSpec) setPrompt(promptGenerator.next());
+            if (!testSpec) setPrompt(findNextPrompt(promptGenerator.makeRandomPrompt, prompt));
             setErrorMessage(undefined);
         }
     }, [prompt, promptGenerator, testSpec]);

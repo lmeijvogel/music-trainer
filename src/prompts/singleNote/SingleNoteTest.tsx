@@ -10,6 +10,7 @@ import { useMobileDisplay } from "../../hooks/useMobileDisplay";
 import { ErrorDisplay } from "../../ErrorDisplay";
 import { NoteButtons } from "./NoteButtons";
 import styled from "styled-components";
+import { findNextPrompt } from "../../helpers/promptGeneratorHelpers";
 
 export const SingleNoteTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -19,12 +20,11 @@ export const SingleNoteTest = () => {
     const isMobileDisplay = useMobileDisplay();
 
     const promptGenerator = useMemo(() => new SingleNotePromptGenerator(
-        ["C", "F", "Bb", "Eb", "G", "D", "A", "E"],
         "E3",
         "A5"
     ), []);
 
-    const [prompt, setPrompt] = useState<Prompt>(testSpec?.type === "singleNote" ? SingleNotePrompt.fromTestSpec(testSpec) : promptGenerator.next());
+    const [prompt, setPrompt] = useState<Prompt>(testSpec?.type === "singleNote" ? SingleNotePrompt.fromTestSpec(testSpec) : findNextPrompt(promptGenerator.makeRandomPrompt, undefined));
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
@@ -41,7 +41,7 @@ export const SingleNoteTest = () => {
         if (check) {
             setErrorMessage(check);
         } else {
-            if (!testSpec) setPrompt(promptGenerator.next());
+            if (!testSpec) setPrompt(findNextPrompt(promptGenerator.makeRandomPrompt, prompt));
             setErrorMessage(undefined);
         }
     }, [prompt, promptGenerator, testSpec]);

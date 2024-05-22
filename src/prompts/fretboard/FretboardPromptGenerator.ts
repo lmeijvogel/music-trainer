@@ -1,18 +1,23 @@
 import { FretboardPrompt } from "./FretboardPrompt";
-import { PromptGenerator } from "../../PromptGenerator";
 import { StartAndEndFret, startAndEndFrets } from "./StartAndEndFret";
 import { getLowestAndHighestNotes } from "../../helpers/getLowestAndHighestNotes";
 import { correctForKey } from "../../helpers/correctForKey";
+import { pickRandomNote } from "../../helpers/promptGeneratorHelpers";
+import { FretboardTestSettings } from "./FretboardTestSettings";
 
-export class FretboardPromptGenerator extends PromptGenerator<FretboardPrompt> {
-    makeRandomPrompt(): FretboardPrompt {
-        const keySignature = this.pickRandomKeySignature();
+export class FretboardPromptGenerator {
+    constructor(private settings: FretboardTestSettings) { }
+
+    makeRandomPrompt = () => {
+        const keySignature = this.settings.keySignature;
+        console.log("keySignature: ", keySignature);
 
         const fretGroup = this.pickRandomFretGroup();
 
-        const [lowestNote, highestNote] = getLowestAndHighestNotes(fretGroup);
+        const [lowestString, highestString] = this.getStringsFromLevel();
+        const [lowestNote, highestNote] = getLowestAndHighestNotes(fretGroup, highestString, lowestString);
 
-        const note = this.pickRandomNote(keySignature, lowestNote, highestNote);
+        const note = pickRandomNote(keySignature, lowestNote, highestNote);
 
         const correctedNote = correctForKey(note, keySignature);
 
@@ -20,9 +25,22 @@ export class FretboardPromptGenerator extends PromptGenerator<FretboardPrompt> {
     }
 
     pickRandomFretGroup(): StartAndEndFret {
-        const index = Math.floor(Math.random() * startAndEndFrets.length);
+        const position = Math.floor(Math.random() * this.settings.maxPosition / 2) * 2;
 
-        return startAndEndFrets[index];
+        return startAndEndFrets.find(fr => fr.start === position) ?? startAndEndFrets[0];
+    }
+
+    setSettings(newSettings: FretboardTestSettings) {
+        this.settings = newSettings;
+    }
+
+    private getStringsFromLevel() {
+        const allStrings = ["E5", "B4", "G4", "D4", "A3", "E3"];
+
+        const highestNote = allStrings[0];
+
+        const lowestNote = this.settings.strings[this.settings.strings.length - 1];
+
+        return [lowestNote, highestNote];
     }
 }
-
