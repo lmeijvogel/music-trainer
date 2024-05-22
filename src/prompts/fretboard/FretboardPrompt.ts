@@ -1,3 +1,4 @@
+import { Note } from "tonal";
 import { correctForKey } from "../../helpers/correctForKey";
 import { FretboardTestSpec } from "../../helpers/locationBarHelpers";
 import { NotesPerBeat, Prompt } from "../Prompt";
@@ -12,9 +13,13 @@ export class FretboardPrompt extends Prompt {
     }
 
     check(input: string) {
+        // correctForKey changes sharps to flats or vice versa, depending on the
+        // key signature. (e.g. If the key signature is F, we interpret Bb as Bb and not as A#)
         const correctedInput = correctForKey(input, this.keySignature);
 
-        if (this.note === correctedInput)
+        // Note.simplify() returns the simplest enharmonic note, e.g. B# will
+        // be simplified to C. This makes it easier to check.
+        if (Note.simplify(this.note) === Note.simplify(correctedInput))
             return undefined;
 
         return `Answer was ${this.note}, you answered ${correctedInput}.`;
