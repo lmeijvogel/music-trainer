@@ -47,9 +47,15 @@ type GuitarStringProps = {
 };
 
 const GuitarString = ({ stringNumber }: GuitarStringProps) => {
+    const fretLabelX = calculateFretPosition(-0.2, fullScaleLength) + paddingLeft;
     const y = getY(stringNumber);
 
+    const stringNote = strings[stringNumber];
+
+    const label = stringNote === "E5" ? "e" : stringNote[0];
+
     return <>
+        <StringLabel x={fretLabelX} y={y} dominantBaseline="middle">{label}</StringLabel>
         {range(0, displayedFretCount - 1).map((_, position) => {
             const fret = position + 1;
             const xLeft = calculateFretPosition(fret - 1, fullScaleLength) + paddingLeft;
@@ -59,6 +65,10 @@ const GuitarString = ({ stringNumber }: GuitarStringProps) => {
         })}
     </>;
 };
+
+const StringLabel = styled.text`
+    font-size: 10px;
+`;
 
 const StringLine = styled.line`
     stroke: black;
