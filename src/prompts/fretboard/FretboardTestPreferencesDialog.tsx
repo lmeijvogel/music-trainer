@@ -3,6 +3,7 @@ import { Dialog } from "./Dialog";
 import { FretboardTestSettings } from "./FretboardTestSettings";
 import styled from "styled-components";
 import { StringsSelector } from "./StringsSelector";
+import { PositionsSelector } from "./PositionsSelector";
 
 type Props = {
     initialSettings: FretboardTestSettings;
@@ -22,26 +23,6 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
         const newSignature = event.target.value;
 
         setKeySignature(newSignature);
-    };
-
-    const onMinPositionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-        const position = parseInt(event.target.value, 10);
-
-        setMinPosition(position);
-
-        if (maxPosition < position) {
-            setMaxPosition(position);
-        }
-    };
-
-    const onMaxPositionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-        const position = parseInt(event.target.value, 10);
-
-        setMaxPosition(position);
-
-        if (position < minPosition) {
-            setMinPosition(position);
-        }
     };
 
     const onSubmitButtonClick = () => {
@@ -72,42 +53,7 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
                     </StyledSection>
                     <StyledSection>
                         <Title>Posities</Title>
-                        <PositionInput>
-                            <PositionLabel>Van:</PositionLabel>
-                            <input
-                                type="range"
-                                min={allowedPositions.at(0)}
-                                max={allowedPositions.at(-1)}
-                                step={2}
-                                value={minPosition}
-                                onChange={onMinPositionChange}
-                                list="markers"
-                            />
-                            <PositionValueLabel>{minPosition}</PositionValueLabel>
-                            <datalist id="markers">
-                                {allowedPositions.map((val) => (
-                                    <option key={val} id={`${val}`} value={val}></option>
-                                ))}
-                            </datalist>
-                        </PositionInput>
-                        <PositionInput>
-                            <PositionLabel>Tot:</PositionLabel>
-                            <input
-                                type="range"
-                                min={allowedPositions.at(0)}
-                                max={allowedPositions.at(-1)}
-                                step={2}
-                                value={maxPosition}
-                                onChange={onMaxPositionChange}
-                                list="markers"
-                            />
-                            <PositionValueLabel>{maxPosition}</PositionValueLabel>
-                            <datalist id="markers">
-                                {allowedPositions.map((val) => (
-                                    <option key={val} id={`${val}`} value={val}></option>
-                                ))}
-                            </datalist>
-                        </PositionInput>
+                        <PositionsSelector positions={{ min: minPosition, max: maxPosition }} allowedPositions={allowedPositions} onMinChange={setMinPosition} onMaxChange={setMaxPosition} />
                     </StyledSection>
                 </div>
                 <BottomBar>
@@ -147,27 +93,6 @@ const Title = styled.h3`
 
 const KeySelect = styled.select`
     width: 50px;
-`;
-
-const PositionInput = styled.label`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
-    align-items: center;
-`;
-
-const PositionLabel = styled.span`
-    width: 30px;
-
-    margin-right: 5px;
-    text-align: right;
-`;
-
-const PositionValueLabel = styled.span`
-    width: 30px;
-
-    text-align: right;
 `;
 
 const BottomBar = styled.div`
