@@ -82,7 +82,7 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
                 <div>
                     <StyledSection>
                         <Title>Snaren</Title>
-                        <ul>
+                        <StringsList>
                             {allStrings.map((str, i) => (
                                 <ListItem key={str}>
                                     <Checkbox i={i} checked={i < lowestString} onChange={onStringChange}>
@@ -90,15 +90,15 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
                                     </Checkbox>
                                 </ListItem>
                             ))}
-                        </ul>
+                        </StringsList>
                     </StyledSection>
                     <StyledSection>
                         <Title>Toonsoort</Title>
-                        <select defaultValue={keySignature} onChange={onKeySignatureChange}>
+                        <KeySelect defaultValue={keySignature} onChange={onKeySignatureChange}>
                             {allKeySignatures.map((sig) => (
                                 <KeySignatureOption key={sig} value={sig} />
                             ))}
-                        </select>
+                        </KeySelect>
                     </StyledSection>
                     <StyledSection>
                         <Title>Posities</Title>
@@ -163,11 +163,25 @@ const KeySignatureOption = ({ value }: KeySignatureOptionProps) => {
     return <option value={value}>{value}</option>;
 };
 const StyledSection = styled.section`
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
     min-width: 300px;
 `;
 
 const Title = styled.h3`
     width: 100%;
+    text-align: center;
+`;
+
+const StringsList = styled.ul`
+    display: flex;
+    flex-direction: column;
+
+    padding: 0;
+
+    align-items: center;
     text-align: center;
 `;
 
@@ -197,6 +211,10 @@ const Checkbox = <T,>({
         </label>
     );
 };
+
+const KeySelect = styled.select`
+    width: 50px;
+`;
 
 const PositionInput = styled.label`
     display: flex;
