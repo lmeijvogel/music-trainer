@@ -2,6 +2,7 @@ import { ChangeEventHandler, useState } from "react";
 import { Dialog } from "./Dialog";
 import { FretboardTestSettings } from "./FretboardTestSettings";
 import styled from "styled-components";
+import { StringsSelector } from "./StringsSelector";
 
 type Props = {
     initialSettings: FretboardTestSettings;
@@ -16,29 +17,6 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
     const [minPosition, setMinPosition] = useState<number>(initialSettings.minPosition);
     const [maxPosition, setMaxPosition] = useState<number>(initialSettings.maxPosition);
     const [keySignature, setKeySignature] = useState<string>(initialSettings.keySignature);
-
-    const allStrings = ["E5", "B4", "G4", "D4", "A3", "E3"];
-
-    const lowestString = strings.length;
-
-    const selectCumulative = (
-        allEntries: string[],
-        selectedEntries: string[],
-        index: number,
-        checked: boolean
-    ): string[] => {
-        const highestSelectedIndex = selectedEntries.length;
-
-        // When clicking the lowest selected item, then just toggle that one on/off,
-        // If any other item is clicked, that item will be the new lowest one.
-        const highestSelectedIndexClicked = !checked && index === highestSelectedIndex - 1;
-        const newHighestSelectedIndex = highestSelectedIndexClicked ? index - 1 : index;
-
-        return allEntries.slice(0, newHighestSelectedIndex + 1);
-    };
-    const onStringChange = (i: number, checked: boolean) => {
-        setStrings(selectCumulative(allStrings, strings, i, checked));
-    };
 
     const onKeySignatureChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
         const newSignature = event.target.value;
@@ -82,15 +60,7 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
                 <div>
                     <StyledSection>
                         <Title>Snaren</Title>
-                        <StringsList>
-                            {allStrings.map((str, i) => (
-                                <ListItem key={str}>
-                                    <Checkbox i={i} checked={i < lowestString} onChange={onStringChange}>
-                                        {str[0]}
-                                    </Checkbox>
-                                </ListItem>
-                            ))}
-                        </StringsList>
+                        <StringsSelector strings={strings} onChange={setStrings} />
                     </StyledSection>
                     <StyledSection>
                         <Title>Toonsoort</Title>
@@ -175,43 +145,6 @@ const Title = styled.h3`
     text-align: center;
 `;
 
-const StringsList = styled.ul`
-    display: flex;
-    flex-direction: column;
-
-    padding: 0;
-
-    align-items: center;
-    text-align: center;
-`;
-
-const ListItem = styled.li`
-    list-style-type: none;
-`;
-
-const Checkbox = <T,>({
-    i,
-    checked,
-    children,
-    onChange
-}: {
-    i: T;
-    checked: boolean;
-    children: JSX.Element | string;
-    onChange: (i: T, newValue: boolean) => void;
-}) => {
-    const onCheckboxChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-        onChange(i, event.target.checked);
-    };
-
-    return (
-        <label>
-            <StyledInput type="checkbox" checked={checked} onChange={onCheckboxChange} />
-            {children}
-        </label>
-    );
-};
-
 const KeySelect = styled.select`
     width: 50px;
 `;
@@ -222,10 +155,6 @@ const PositionInput = styled.label`
     justify-content: center;
 
     align-items: center;
-`;
-
-const StyledInput = styled.input`
-    margin-right: 12px;
 `;
 
 const PositionLabel = styled.span`
