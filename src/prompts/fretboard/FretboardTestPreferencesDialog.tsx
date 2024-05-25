@@ -5,13 +5,15 @@ import styled from "styled-components";
 
 type Props = {
     initialSettings: FretboardTestSettings;
+    allowedPositions: number[];
     onSubmit: (newSettings: FretboardTestSettings) => void;
 };
 
 const allKeySignatures = ["Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#"];
 
-export const FretboardTestPreferencesDialog = ({ initialSettings, onSubmit }: Props) => {
+export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositions, onSubmit }: Props) => {
     const [strings, setStrings] = useState<string[]>(initialSettings.strings);
+    const [minPosition, setMinPosition] = useState<number>(initialSettings.minPosition);
     const [maxPosition, setMaxPosition] = useState<number>(initialSettings.maxPosition);
     const [keySignature, setKeySignature] = useState<string>(initialSettings.keySignature);
 
@@ -44,14 +46,31 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, onSubmit }: Pr
         setKeySignature(newSignature);
     };
 
-    const onPositionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-        setMaxPosition(parseInt(event.target.value, 10));
+    const onMinPositionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+        const position = parseInt(event.target.value, 10);
+
+        setMinPosition(position);
+
+        if (maxPosition < position) {
+            setMaxPosition(position);
+        }
+    };
+
+    const onMaxPositionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+        const position = parseInt(event.target.value, 10);
+
+        setMaxPosition(position);
+
+        if (position < minPosition) {
+            setMinPosition(position);
+        }
     };
 
     const onSubmitButtonClick = () => {
         const newSettings: FretboardTestSettings = {
             keySignature,
             strings,
+            minPosition,
             maxPosition
         };
 
@@ -84,18 +103,39 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, onSubmit }: Pr
                     <StyledSection>
                         <Title>Posities</Title>
                         <PositionInput>
+                            <PositionLabel>Van:</PositionLabel>
                             <input
                                 type="range"
-                                min={0}
-                                max={8}
+                                min={allowedPositions.at(0)}
+                                max={allowedPositions.at(-1)}
                                 step={2}
-                                defaultValue={maxPosition}
-                                onChange={onPositionChange}
+                                value={minPosition}
+                                onChange={onMinPositionChange}
                                 list="markers"
                             />
-                            <span>{maxPosition}</span>
+                            <PositionValueLabel>{minPosition}</PositionValueLabel>
                             <datalist id="markers">
-                                {[0, 2, 4, 6, 8].map(val => <option id={`${val}`} value={val}></option>)}
+                                {allowedPositions.map((val) => (
+                                    <option key={val} id={`${val}`} value={val}></option>
+                                ))}
+                            </datalist>
+                        </PositionInput>
+                        <PositionInput>
+                            <PositionLabel>Tot:</PositionLabel>
+                            <input
+                                type="range"
+                                min={allowedPositions.at(0)}
+                                max={allowedPositions.at(-1)}
+                                step={2}
+                                value={maxPosition}
+                                onChange={onMaxPositionChange}
+                                list="markers"
+                            />
+                            <PositionValueLabel>{maxPosition}</PositionValueLabel>
+                            <datalist id="markers">
+                                {allowedPositions.map((val) => (
+                                    <option key={val} id={`${val}`} value={val}></option>
+                                ))}
                             </datalist>
                         </PositionInput>
                     </StyledSection>
@@ -168,6 +208,19 @@ const PositionInput = styled.label`
 
 const StyledInput = styled.input`
     margin-right: 12px;
+`;
+
+const PositionLabel = styled.span`
+    width: 30px;
+
+    margin-right: 5px;
+    text-align: right;
+`;
+
+const PositionValueLabel = styled.span`
+    width: 30px;
+
+    text-align: right;
 `;
 
 const BottomBar = styled.div`

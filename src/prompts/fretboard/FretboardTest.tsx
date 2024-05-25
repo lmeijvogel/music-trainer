@@ -25,6 +25,7 @@ import { FretboardTestPreferencesDialog } from "./FretboardTestPreferencesDialog
 
 const defaultFretboardTestSettings: FretboardTestSettings = {
     strings: ["E5"],
+    minPosition: 0,
     maxPosition: 0,
     keySignature: "C"
 };
@@ -104,7 +105,7 @@ export const FretboardTest = () => {
 
     return (
         <>
-            {prefsDialogVisible ? <FretboardTestPreferencesDialog initialSettings={config} onSubmit={applyConfig} /> : null}
+            {prefsDialogVisible ? <FretboardTestPreferencesDialog initialSettings={config} allowedPositions={[0, 2, 4, 6, 8]} onSubmit={applyConfig} /> : null}
             <div tabIndex={0} onClick={onAppClick}>
                 <ErrorDisplay text={errorMessage} />
                 <div onClick={showPrefsDialog}>

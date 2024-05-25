@@ -25,9 +25,11 @@ export class FretboardPromptGenerator {
     }
 
     pickRandomFretGroup(): StartAndEndFret {
-        const position = Math.floor(Math.random() * this.settings.maxPosition / 2) * 2;
+        const availablePositions = startAndEndFrets.filter(({ start }) => this.settings.minPosition <= start && start <= this.settings.maxPosition);
 
-        return startAndEndFrets.find(fr => fr.start === position) ?? startAndEndFrets[0];
+        const position = Math.floor(Math.random() * availablePositions.length);
+
+        return availablePositions[position] ?? startAndEndFrets[0];
     }
 
     setSettings(newSettings: FretboardTestSettings) {
