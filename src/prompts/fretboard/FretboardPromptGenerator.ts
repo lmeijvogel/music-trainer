@@ -10,7 +10,6 @@ export class FretboardPromptGenerator {
 
     makeRandomPrompt = () => {
         const keySignature = this.settings.keySignature;
-        console.log("keySignature: ", keySignature);
 
         const fretGroup = this.pickRandomFretGroup();
 
@@ -22,18 +21,16 @@ export class FretboardPromptGenerator {
         const correctedNote = correctForKey(note, keySignature);
 
         return new FretboardPrompt(keySignature, correctedNote, fretGroup.start, fretGroup.end);
-    }
+    };
 
-    pickRandomFretGroup(): StartAndEndFret {
-        const availablePositions = startAndEndFrets.filter(({ start }) => this.settings.minPosition <= start && start <= this.settings.maxPosition);
+    private pickRandomFretGroup(): StartAndEndFret {
+        const availablePositions = startAndEndFrets.filter(
+            ({ start }) => this.settings.minPosition <= start && start <= this.settings.maxPosition
+        );
 
         const position = Math.floor(Math.random() * availablePositions.length);
 
         return availablePositions[position] ?? startAndEndFrets[0];
-    }
-
-    setSettings(newSettings: FretboardTestSettings) {
-        this.settings = newSettings;
     }
 
     private getStringsFromLevel() {

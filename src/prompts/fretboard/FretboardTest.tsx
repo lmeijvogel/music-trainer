@@ -31,14 +31,12 @@ const defaultFretboardTestSettings: FretboardTestSettings = {
 };
 
 export const FretboardTest = () => {
-    const inputRef = useRef<HTMLInputElement>(null);
-
     const [prefsDialogVisible, setPrefsDialogVisible] = useState(false);
     const [config, setConfig] = useState<FretboardTestSettings>(getConfigFromLocalStorage());
 
     const [testSpec, setTestSpec] = useState<TestSpec | undefined>(parseLocationBar(window.location));
 
-    const promptGenerator = useMemo(() => { console.log("Getting new promptGenerator"); return new FretboardPromptGenerator(config) }, [config]);
+    const promptGenerator = useMemo(() => new FretboardPromptGenerator(config), [config]);
 
     const [prompt, setPrompt] = useState<FretboardPrompt>(
         testSpec?.type === "fretboard"
@@ -51,16 +49,8 @@ export const FretboardTest = () => {
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
     useEffect(() => {
-        inputRef.current?.focus();
-    }, [inputRef]);
-
-    useEffect(() => {
         setPrompt(findNextPrompt(promptGenerator.makeRandomPrompt, undefined));
     }, [promptGenerator]);
-
-    const onAppClick = useCallback(() => {
-        inputRef.current?.focus();
-    }, [inputRef]);
 
     const onSubmitInput = useCallback(
         (input: string, stringNumber: number, fretNumber: number) => {
@@ -106,7 +96,7 @@ export const FretboardTest = () => {
     return (
         <>
             {prefsDialogVisible ? <FretboardTestPreferencesDialog initialSettings={config} allowedPositions={[0, 2, 4, 6, 8]} onSubmit={applyConfig} /> : null}
-            <div tabIndex={0} onClick={onAppClick}>
+            <div>
                 <ErrorDisplay text={errorMessage} />
                 <div onClick={showPrefsDialog}>
                     <SingleNoteStave prompt={prompt} />
