@@ -26,12 +26,14 @@ export function pickRandomKeySignature(allowedKeySignatures: string[]) {
     return allowedKeySignatures[randomIndex];
 }
 
-export function pickRandomNote(keySignature: string, lowestNote: string, highestNote: string) {
+export function pickRandomNote(keySignature: string, lowestNote: string, highestNote: string, emphasizedNotes: string[] = []) {
     const candidateNotes = enumerateCandidateNotes(keySignature, lowestNote, highestNote);
 
-    const randomIndex = Math.floor(Math.random() * candidateNotes.length);
+    const candidateNotesWithEmphasizedNotes = [...candidateNotes, ...emphasizedNotes];
 
-    return candidateNotes[randomIndex];
+    const randomIndex = Math.floor(Math.random() * candidateNotesWithEmphasizedNotes.length);
+
+    return candidateNotesWithEmphasizedNotes[randomIndex];
 }
 
 function enumerateCandidateNotes(keySignature: string, lowestNote: string, highestNote: string): string[] {

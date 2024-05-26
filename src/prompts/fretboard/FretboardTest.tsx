@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FretboardPromptGenerator } from "./FretboardPromptGenerator";
 import { SingleNoteStave } from "../SingleNoteStave";
 import { ClickedFretMarker, FretboardSvg, WithClickedFretList } from "./Fretboard";
@@ -22,6 +22,7 @@ import { findNextPrompt } from "../../helpers/promptGeneratorHelpers";
 import { FretboardTestSettings } from "./FretboardTestSettings";
 import { ClickableFretboardSection } from "./ClickableFretboardSection";
 import { FretboardTestPreferencesDialog } from "./FretboardTestPreferencesDialog";
+import { useEmphasizedNotes } from "./useEmphasizedNotes";
 
 const defaultFretboardTestSettings: FretboardTestSettings = {
     strings: ["E5"],
@@ -35,6 +36,8 @@ export const FretboardTest = () => {
     const [config, setConfig] = useState<FretboardTestSettings>(getConfigFromLocalStorage());
 
     const [testSpec, setTestSpec] = useState<TestSpec | undefined>(parseLocationBar(window.location));
+
+    const [emphasizedNotes, markCorrect, markIncorrect] = useEmphasizedNotes();
 
     const promptGenerator = useMemo(() => new FretboardPromptGenerator(config), [config]);
 
@@ -62,6 +65,8 @@ export const FretboardTest = () => {
                     fretNumber,
                     result: "bad"
                 });
+
+                markIncorrect(prompt.note);
                 setErrorMessage(check);
             } else {
                 addClickedFret({
@@ -70,12 +75,18 @@ export const FretboardTest = () => {
                     result: "good"
                 });
 
+                markCorrect(prompt.note);
                 if (!testSpec) setPrompt(findNextPrompt(promptGenerator.makeRandomPrompt, prompt));
+
                 setErrorMessage(undefined);
             }
         },
-        [prompt, promptGenerator, addClickedFret, testSpec]
+        [prompt, addClickedFret, markIncorrect, markCorrect, testSpec, promptGenerator.makeRandomPrompt]
     );
+
+    useEffect(() => {
+        promptGenerator.setEmphasizedNotes(emphasizedNotes);
+    }, [promptGenerator, emphasizedNotes]);
 
     const lastFretX = calculateFretPosition(displayedFretCount, fullScaleLength);
     const maxStringX = paddingLeft + lastFretX;

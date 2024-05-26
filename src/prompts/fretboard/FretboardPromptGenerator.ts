@@ -6,7 +6,13 @@ import { pickRandomNote } from "../../helpers/promptGeneratorHelpers";
 import { FretboardTestSettings } from "./FretboardTestSettings";
 
 export class FretboardPromptGenerator {
+    emphasizedNotes: string[] = [];
+
     constructor(private settings: FretboardTestSettings) { }
+
+    setEmphasizedNotes(emphasizedNotes: string[]) {
+        this.emphasizedNotes = emphasizedNotes;
+    }
 
     makeRandomPrompt = () => {
         const keySignature = this.settings.keySignature;
@@ -16,7 +22,7 @@ export class FretboardPromptGenerator {
         const [lowestString, highestString] = this.getStringsFromLevel();
         const [lowestNote, highestNote] = getLowestAndHighestNotes(fretGroup, highestString, lowestString);
 
-        const note = pickRandomNote(keySignature, lowestNote, highestNote);
+        const note = pickRandomNote(keySignature, lowestNote, highestNote, this.emphasizedNotes);
 
         const correctedNote = correctForKey(note, keySignature);
 
