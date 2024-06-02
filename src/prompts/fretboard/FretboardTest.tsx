@@ -23,6 +23,7 @@ import { FretboardTestSettings } from "./FretboardTestSettings";
 import { ClickableFretboardSection } from "./ClickableFretboardSection";
 import { FretboardTestPreferencesDialog } from "./FretboardTestPreferencesDialog";
 import { useEmphasizedNotes } from "./useEmphasizedNotes";
+import { TestPreferencesDisplay } from "./TestPreferencesDisplay";
 
 const defaultFretboardTestSettings: FretboardTestSettings = {
     strings: ["E5"],
@@ -106,12 +107,23 @@ export const FretboardTest = () => {
 
     return (
         <>
-            {prefsDialogVisible ? <FretboardTestPreferencesDialog initialSettings={config} allowedPositions={[0, 2, 4, 6, 8]} onSubmit={applyConfig} /> : null}
+            {prefsDialogVisible ? (
+                <FretboardTestPreferencesDialog
+                    initialSettings={config}
+                    allowedPositions={[0, 2, 4, 6, 8]}
+                    onSubmit={applyConfig}
+                />
+            ) : null}
             <div>
                 <ErrorDisplay text={errorMessage} />
-                <div onClick={showPrefsDialog}>
-                    <SingleNoteStave prompt={prompt} />
-                </div>
+                <TopRow>
+                    <TopRowColumn>
+                        <TestPreferencesDisplay config={config} onShowPreferencesDialog={showPrefsDialog} />
+                    </TopRowColumn>
+                    <TopRowColumn>
+                        <SingleNoteStave prompt={prompt} />
+                    </TopRowColumn>
+                </TopRow>
 
                 <FretboardSvg viewBox={viewBox}>
                     <ClickableFretboardSection
@@ -134,10 +146,19 @@ export const FretboardTest = () => {
                 </FretboardSvg>
 
                 <HardLink prompt={prompt} onClick={setTestSpec} />
-            </div >
+            </div>
         </>
     );
 };
+
+const TopRow = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
+
+const TopRowColumn = styled.div`
+    width: 33%;
+`;
 
 function getConfigFromLocalStorage(): FretboardTestSettings {
     const text = localStorage.getItem("fretboardTestSettings");
