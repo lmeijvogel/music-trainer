@@ -38,7 +38,7 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
     return (
         <Dialog>
             <DialogContents>
-                <div>
+                <Sections>
                     <StyledSection>
                         <Title>Snaren</Title>
                         <StringsSelector strings={strings} onChange={setStrings} />
@@ -55,7 +55,7 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
                         <Title>Posities</Title>
                         <PositionsSelector positions={{ min: minPosition, max: maxPosition }} allowedPositions={allowedPositions} onMinChange={setMinPosition} onMaxChange={setMaxPosition} />
                     </StyledSection>
-                </div>
+                </Sections>
                 <BottomBar>
                     <button onClick={onSubmitButtonClick}>Pas toe</button>
                 </BottomBar>
@@ -63,6 +63,15 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
         </Dialog>
     );
 };
+
+const Sections = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    @media (max-height: 400px) {
+        flex-direction: row;
+    }
+`;
 
 const DialogContents = styled.div`
     display: flex;
@@ -83,7 +92,15 @@ const StyledSection = styled.section`
     flex-direction: column;
 
     align-items: center;
-    min-width: 300px;
+
+    // The dialog would normally be very narrow, so make it a bit bigger
+    // On mobile, it looks a bit nicer with narrower sections, because
+    // otherwise there's a lot of empty space.
+    min-width: 400px;
+
+    @media (max-height: 400px) {
+        min-width: 200px;
+    }
 `;
 
 const Title = styled.h3`
