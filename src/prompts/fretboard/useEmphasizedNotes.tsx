@@ -12,7 +12,7 @@ import { useState } from "react";
 // Keep CORRECT_WEIGHT significantly smaller than INCORRECT_WEIGHT, so the note
 // is proposed more often.
 const CORRECT_WEIGHT = -1;
-const INCORRECT_WEIGHT = 5;
+const INCORRECT_WEIGHT = 3;
 
 export const useEmphasizedNotes: () => [string[], (note: string) => void, (note: string) => void] = () => {
     const [emphasizedNotes, setEmphasizedNotes] = useState<string[]>([]);
@@ -29,7 +29,7 @@ export const useEmphasizedNotes: () => [string[], (note: string) => void, (note:
     function addValue(note: string, delta: number) {
         const emphasis = emphasizedNotesWeights.get(note) ?? 0;
 
-        const newValue = Math.max(0, emphasis + delta);
+        const newValue = Math.max(-1, emphasis + delta);
 
         emphasizedNotesWeights.set(note, newValue);
 

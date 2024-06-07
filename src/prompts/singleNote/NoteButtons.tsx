@@ -47,7 +47,6 @@ type StyledNoteButtonProps = {
 };
 
 const StyledNoteButton = styled.button.attrs<StyledNoteButtonProps>(({ $x, $y }) => {
-    console.log({ $x, $y });
     return {
         style: {
             gridColumn: $x,

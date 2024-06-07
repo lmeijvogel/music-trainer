@@ -2,8 +2,9 @@ import { ChangeEventHandler, useState } from "react";
 import { Dialog } from "./Dialog";
 import { FretboardTestSettings } from "./FretboardTestSettings";
 import styled from "styled-components";
-import { StringsSelector } from "./StringsSelector";
-import { PositionsSelector } from "./PositionsSelector";
+import { RangeSelector } from "./RangeSelector";
+
+// TODO: Remove StringSelector
 
 type Props = {
     initialSettings: FretboardTestSettings;
@@ -14,7 +15,8 @@ type Props = {
 const allKeySignatures = ["Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#"];
 
 export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositions, onSubmit }: Props) => {
-    const [strings, setStrings] = useState<string[]>(initialSettings.strings);
+    const [minString, setMinString] = useState<string>(initialSettings.minString);
+    const [maxString, setMaxString] = useState<string>(initialSettings.maxString);
     const [minPosition, setMinPosition] = useState<number>(initialSettings.minPosition);
     const [maxPosition, setMaxPosition] = useState<number>(initialSettings.maxPosition);
     const [keySignature, setKeySignature] = useState<string>(initialSettings.keySignature);
@@ -28,20 +30,30 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
     const onSubmitButtonClick = () => {
         const newSettings: FretboardTestSettings = {
             keySignature,
-            strings,
+            minString,
+            maxString,
             minPosition,
             maxPosition
         };
 
         onSubmit(newSettings);
     };
+
+    const allStrings = ["E5", "B4", "G4", "D4", "A3", "E3"];
+
     return (
         <Dialog>
             <DialogContents>
                 <Sections>
                     <StyledSection>
                         <Title>Snaren</Title>
-                        <StringsSelector strings={strings} onChange={setStrings} />
+                        <RangeSelector
+                            currentRange={{ min: minString, max: maxString }}
+                            allowedValues={allStrings}
+                            onMinChange={setMinString}
+                            onMaxChange={setMaxString}
+                            valueToString={(el) => el}
+                        />
                     </StyledSection>
                     <StyledSection>
                         <Title>Toonsoort</Title>
@@ -53,7 +65,13 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
                     </StyledSection>
                     <StyledSection>
                         <Title>Posities</Title>
-                        <PositionsSelector positions={{ min: minPosition, max: maxPosition }} allowedPositions={allowedPositions} onMinChange={setMinPosition} onMaxChange={setMaxPosition} />
+                        <RangeSelector
+                            currentRange={{ min: minPosition, max: maxPosition }}
+                            allowedValues={allowedPositions}
+                            onMinChange={setMinPosition}
+                            onMaxChange={setMaxPosition}
+                            valueToString={(value) => `${value}`}
+                        />
                     </StyledSection>
                 </Sections>
                 <BottomBar>
@@ -65,11 +83,11 @@ export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositio
 };
 
 const Sections = styled.div`
-    display: flex;
+    display:flex;
     flex-direction: column;
 
     @media (max-height: 400px) {
-        flex-direction: row;
+        flex - direction: row;
     }
 `;
 
@@ -87,6 +105,7 @@ type KeySignatureOptionProps = {
 const KeySignatureOption = ({ value }: KeySignatureOptionProps) => {
     return <option value={value}>{value}</option>;
 };
+
 const StyledSection = styled.section`
     display: flex;
     flex-direction: column;

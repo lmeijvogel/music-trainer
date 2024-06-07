@@ -1,13 +1,15 @@
+import { rangeFromStartAndEndString } from "../../helpers/rangeFromStartAndEndStrings";
 import { FretboardTestSettings } from "./FretboardTestSettings";
 import styled from "styled-components";
-import { calculateFretPosition } from "./calculateFretPosition";
-import { fullScaleLength, paddingLeft } from "./constants";
 
 type Props = { config: FretboardTestSettings; onShowPreferencesDialog: () => void };
 
 export const TestPreferencesDisplay = ({ config, onShowPreferencesDialog }: Props) => {
     const displayablePositions = formatSingleOrRange(config.minPosition, config.maxPosition);
-    const displayableStrings = config.strings.map((s) => (s === "E5" ? "e" : s[0]));
+
+    const activeStrings = rangeFromStartAndEndString(config.minString, config.maxString);
+
+    const displayableStrings = activeStrings.map((s) => (s === "E5" ? "e" : s[0]));
 
     const displayableStringRange = formatSingleOrRange(displayableStrings.at(0), displayableStrings.at(-1));
 
@@ -43,7 +45,6 @@ const Container = styled.div`
     position: absolute;
 
     top: 20px;
-    left: ${calculateFretPosition(2, fullScaleLength) + paddingLeft}px;
 
     padding: 5px;
 

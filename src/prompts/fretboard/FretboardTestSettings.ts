@@ -1,5 +1,6 @@
 export type FretboardTestSettings = {
-    strings: string[];
+    minString: string;
+    maxString: string;
     minPosition: number;
     maxPosition: number;
     keySignature: string;

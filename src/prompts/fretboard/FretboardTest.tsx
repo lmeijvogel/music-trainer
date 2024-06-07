@@ -7,16 +7,18 @@ import { FretboardPrompt } from "./FretboardPrompt";
 import { HardLink } from "../../HardLink";
 import { ErrorDisplay } from "../../ErrorDisplay";
 import {
+    allStrings,
     displayedFretCount,
     fretMarkerDistance,
     fretMarkerRadius,
     fullScaleLength,
     paddingLeft,
-    stringDistance,
     strings
 } from "./constants";
+
 import { calculateFretPosition } from "./calculateFretPosition";
 import styled from "styled-components";
+
 import { BaseFretboard } from "./BaseFretboard";
 import { findNextPrompt } from "../../helpers/promptGeneratorHelpers";
 import { FretboardTestSettings } from "./FretboardTestSettings";
@@ -24,9 +26,11 @@ import { ClickableFretboardSection } from "./ClickableFretboardSection";
 import { FretboardTestPreferencesDialog } from "./FretboardTestPreferencesDialog";
 import { useEmphasizedNotes } from "./useEmphasizedNotes";
 import { TestPreferencesDisplay } from "./TestPreferencesDisplay";
+import { useStringDistance } from "../../hooks/useStringDistance";
 
 const defaultFretboardTestSettings: FretboardTestSettings = {
-    strings: ["E5"],
+    minString: "E5",
+    maxString: "E5",
     minPosition: 0,
     maxPosition: 0,
     keySignature: "C"
@@ -41,6 +45,8 @@ export const FretboardTest = () => {
     const [emphasizedNotes, markCorrect, markIncorrect] = useEmphasizedNotes();
 
     const promptGenerator = useMemo(() => new FretboardPromptGenerator(config), [config]);
+
+    const stringDistance = useStringDistance();
 
     const [prompt, setPrompt] = useState<FretboardPrompt>(
         testSpec?.type === "fretboard"
@@ -129,7 +135,8 @@ export const FretboardTest = () => {
                     <ClickableFretboardSection
                         startFret={prompt.startFret ?? 0}
                         endFret={prompt.endFret ?? displayedFretCount}
-                        strings={config.strings}
+                        minString={config.minString}
+                        maxString={config.maxString}
                         onFretClick={onSubmitInput}
                     />
 
@@ -157,6 +164,10 @@ const TopRow = styled.div`
 `;
 
 const TopRowColumn = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     width: 33%;
 `;
 
@@ -167,7 +178,12 @@ function getConfigFromLocalStorage(): FretboardTestSettings {
         return defaultFretboardTestSettings;
     }
 
-    return JSON.parse(text) as FretboardTestSettings;
+    const storedConfig = JSON.parse(text) as FretboardTestSettings;
+
+    storedConfig.minString ||= allStrings.at(0)!;
+    storedConfig.maxString ||= allStrings.at(0)!;
+
+    return storedConfig;
 }
 
 function storeFretboardTestSettingsInLocalStorage(settings: FretboardTestSettings) {

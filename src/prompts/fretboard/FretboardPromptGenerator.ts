@@ -4,6 +4,7 @@ import { getLowestAndHighestNotes } from "../../helpers/getLowestAndHighestNotes
 import { correctForKey } from "../../helpers/correctForKey";
 import { pickRandomNote } from "../../helpers/promptGeneratorHelpers";
 import { FretboardTestSettings } from "./FretboardTestSettings";
+import { allStrings } from "./constants";
 
 export class FretboardPromptGenerator {
     emphasizedNotes: string[] = [];
@@ -40,11 +41,9 @@ export class FretboardPromptGenerator {
     }
 
     private getStringsFromLevel() {
-        const allStrings = ["E5", "B4", "G4", "D4", "A3", "E3"];
+        const highestNote = this.settings.minString ?? allStrings[0];
 
-        const highestNote = allStrings[0];
-
-        const lowestNote = this.settings.strings[this.settings.strings.length - 1];
+        const lowestNote = this.settings.maxString ?? allStrings[0];
 
         return [lowestNote, highestNote];
     }

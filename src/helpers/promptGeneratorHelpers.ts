@@ -29,6 +29,7 @@ export function pickRandomKeySignature(allowedKeySignatures: string[]) {
 export function pickRandomNote(keySignature: string, lowestNote: string, highestNote: string, emphasizedNotes: string[] = []) {
     const candidateNotes = enumerateCandidateNotes(keySignature, lowestNote, highestNote);
 
+    // Emphasized notes will be picked about twice as much
     const candidateNotesWithEmphasizedNotes = [...candidateNotes, ...emphasizedNotes];
 
     const randomIndex = Math.floor(Math.random() * candidateNotesWithEmphasizedNotes.length);

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { calculateFretPosition } from "./calculateFretPosition";
-import { fullScaleLength, paddingLeft, stringDistance } from "./constants";
+import { fullScaleLength, paddingLeft } from "./constants";
 import { getY } from "./helpers";
+import { useStringDistance } from "../../hooks/useStringDistance";
 
 type ClickedFret = {
     stringNumber: number;
@@ -49,10 +50,12 @@ type ClickedRectangleProps = {
 };
 
 export const ClickedFretMarker = ({ clickedSquare, afterFadeout }: ClickedRectangleProps) => {
+    const stringDistance = useStringDistance();
+
     const left = calculateFretPosition(clickedSquare.fretNumber - 1, fullScaleLength) + paddingLeft;
     const right = calculateFretPosition(clickedSquare.fretNumber, fullScaleLength) + paddingLeft;
 
-    const y = getY(clickedSquare.stringNumber);
+    const y = getY(clickedSquare.stringNumber, stringDistance);
 
     return <ClickedRectangleSvg
         x={left}

@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { calculateFretPosition } from "./calculateFretPosition";
-import { displayedFretCount, fretBottom, fretMarkerDistance, fretMarkerRadius, fretTop, fullScaleLength, octavePosition, paddingLeft, strings } from "./constants";
+import { displayedFretCount, fretMarkerDistance, fretMarkerRadius, fretPadding, fretTop, fullScaleLength, octavePosition, paddingLeft, paddingTop, strings } from "./constants";
 import { getY, range } from "./helpers";
+import { useStringDistance } from "../../hooks/useStringDistance";
 
 function calculateFretCenter(fretNumber: number): number {
     const left = calculateFretPosition(fretNumber - 1, fullScaleLength);
@@ -11,6 +12,10 @@ function calculateFretCenter(fretNumber: number): number {
 }
 
 export const BaseFretboard = () => {
+    const stringDistance = useStringDistance();
+
+    const fretBottom = (strings.length - 1) * stringDistance + paddingTop + fretPadding;
+
     return <StyledBaseFretboard>
         {strings.map((note, index) => (
             <GuitarString key={note} stringNumber={index} />
@@ -47,8 +52,10 @@ type GuitarStringProps = {
 };
 
 const GuitarString = ({ stringNumber }: GuitarStringProps) => {
+    const stringDistance = useStringDistance();
+
     const fretLabelX = calculateFretPosition(-0.2, fullScaleLength) + paddingLeft;
-    const y = getY(stringNumber);
+    const y = getY(stringNumber, stringDistance);
 
     const stringNote = strings[stringNumber];
 

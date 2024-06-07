@@ -1,31 +1,45 @@
 import { Scale, Note } from "tonal";
 import { calculateFretPosition } from "./calculateFretPosition";
-import { activeRectangleTop, displayedFretCount, fullScaleLength, paddingLeft, stringDistance } from "./constants";
+import { allStrings, displayedFretCount, fullScaleLength, paddingLeft, paddingTop } from "./constants";
 import { useCallback } from "react";
 import styled from "styled-components";
 import { getY } from "./helpers";
+import { useStringDistance } from "../../hooks/useStringDistance";
+import { rangeFromStartAndEndString } from "../../helpers/rangeFromStartAndEndStrings";
 
 type OnStringAndFretClick = (note: string, stringNumber: number, fretNumber: number) => void;
 
 type ClickableFretboardSectionProps = {
     startFret: number;
     endFret: number;
-    strings: string[];
+    minString: string;
+    maxString: string;
     onFretClick: OnStringAndFretClick;
 };
+
+// const activeRectangleBottom = paddingTop + (strings.length - 0.5) * stringDistanceOnDesktop;
 
 export const ClickableFretboardSection = ({
     startFret,
     endFret,
-    strings,
+    minString,
+    maxString,
     onFretClick
 }: ClickableFretboardSectionProps) => {
+    const stringDistance = useStringDistance();
+
+    const activeStrings = rangeFromStartAndEndString(minString, maxString);
+
+    const firstStringIndex = allStrings.indexOf(minString);
+
+    const activeRectangleTop = paddingTop + (firstStringIndex * stringDistance) - stringDistance / 2;
+
     const drawActiveRectangle = 0 < startFret || endFret < displayedFretCount;
 
     const activeRectangleLeft = calculateFretPosition(startFret - 1, fullScaleLength) + paddingLeft;
     const activeRectangleRight = calculateFretPosition(endFret, fullScaleLength) + paddingLeft;
 
-    const activeRectangleHeight = strings.length * stringDistance;
+    const activeRectangleHeight = activeStrings.length * stringDistance;
     return (
         <g className="clickable-section">
             <defs>
@@ -67,9 +81,9 @@ export const ClickableFretboardSection = ({
                 </>
             ) : null}
 
-            {strings.map((note, index) => (
+            {activeStrings.map((note, index) => (
                 <ClickableGuitarStringOverlay
-                    stringNumber={index}
+                    stringNumber={index + firstStringIndex}
                     note={note}
                     key={note}
                     firstClickableFret={startFret}
@@ -137,6 +151,8 @@ type ClickableRectangleProps = {
 };
 
 const ClickableRectangle = ({ note, stringNumber, fretNumber, onClick }: ClickableRectangleProps) => {
+    const stringDistance = useStringDistance();
+
     const onRectClicked = useCallback(() => {
         onClick(note, stringNumber, fretNumber);
     }, [note, stringNumber, fretNumber, onClick]);
@@ -144,7 +160,7 @@ const ClickableRectangle = ({ note, stringNumber, fretNumber, onClick }: Clickab
     const left = calculateFretPosition(fretNumber - 1, fullScaleLength) + paddingLeft;
     const right = calculateFretPosition(fretNumber, fullScaleLength) + paddingLeft;
 
-    const y = getY(stringNumber);
+    const y = getY(stringNumber, stringDistance);
 
     return (
         <ClickableRectangleSvg
