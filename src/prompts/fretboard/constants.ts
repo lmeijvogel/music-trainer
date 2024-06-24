@@ -16,3 +16,4 @@ export const fretPadding = 1;
 
 export const fretTop = paddingTop - fretPadding;
 
+export const allKeySignatures = ["Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#"];

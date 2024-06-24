@@ -11,6 +11,7 @@ import { ErrorDisplay } from "../../ErrorDisplay";
 import { NoteButtons } from "./NoteButtons";
 import styled from "styled-components";
 import { findNextPrompt } from "../../helpers/promptGeneratorHelpers";
+import { noop } from "../../helpers/noop";
 
 export const SingleNoteTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +49,7 @@ export const SingleNoteTest = () => {
 
     return (<TestContainer tabIndex={0} onClick={onAppClick}>
         <ErrorDisplay text={errorMessage} />
-        <SingleNoteStave prompt={prompt} />
+        <SingleNoteStave prompt={prompt} onKeyChange={noop} />
 
         {isMobileDisplay ? <NoteButtons keySignature={prompt.keySignature} onSubmit={onSubmitInput} /> : <InputField ref={inputRef} onSubmit={onSubmitInput} validator={(note: string) => !!note.match(/[A-Ga-g]/)} />}
         <HardLink prompt={prompt} onClick={setTestSpec} />

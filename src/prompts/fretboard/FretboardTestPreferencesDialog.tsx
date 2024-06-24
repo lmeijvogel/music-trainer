@@ -3,6 +3,7 @@ import { Dialog } from "./Dialog";
 import { FretboardTestSettings } from "./FretboardTestSettings";
 import styled from "styled-components";
 import { RangeSelector } from "./RangeSelector";
+import { allKeySignatures } from "./constants";
 
 // TODO: Remove StringSelector
 
@@ -11,8 +12,6 @@ type Props = {
     allowedPositions: number[];
     onSubmit: (newSettings: FretboardTestSettings) => void;
 };
-
-const allKeySignatures = ["Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#"];
 
 export const FretboardTestPreferencesDialog = ({ initialSettings, allowedPositions, onSubmit }: Props) => {
     const [minString, setMinString] = useState<string>(initialSettings.minString);

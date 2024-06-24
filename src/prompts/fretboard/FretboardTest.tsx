@@ -7,6 +7,7 @@ import { FretboardPrompt } from "./FretboardPrompt";
 import { HardLink } from "../../HardLink";
 import { ErrorDisplay } from "../../ErrorDisplay";
 import {
+    allKeySignatures,
     allStrings,
     displayedFretCount,
     fretMarkerDistance,
@@ -27,6 +28,7 @@ import { FretboardTestPreferencesDialog } from "./FretboardTestPreferencesDialog
 import { useEmphasizedNotes } from "./useEmphasizedNotes";
 import { TestPreferencesDisplay } from "./TestPreferencesDisplay";
 import { useStringDistance } from "../../hooks/useStringDistance";
+import { Direction } from "tonal";
 
 const defaultFretboardTestSettings: FretboardTestSettings = {
     minString: "E5",
@@ -111,6 +113,20 @@ export const FretboardTest = () => {
         setPrefsDialogVisible(false);
     };
 
+    const onKeyChange = useCallback((direction: Direction) => {
+        const currentSignatureIndex = allKeySignatures.indexOf(config.keySignature);
+
+        let nextSignatureIndex = currentSignatureIndex + direction;
+        if (nextSignatureIndex < 0) nextSignatureIndex = 0;
+        if (nextSignatureIndex >= allKeySignatures.length) nextSignatureIndex = allKeySignatures.length - 1;
+
+        if (nextSignatureIndex !== currentSignatureIndex) {
+            const newSettings = { ...config, keySignature: allKeySignatures[nextSignatureIndex] };
+
+            applyConfig(newSettings);
+        }
+    }, [config]);
+
     return (
         <>
             {prefsDialogVisible ? (
@@ -127,7 +143,7 @@ export const FretboardTest = () => {
                         <TestPreferencesDisplay config={config} onShowPreferencesDialog={showPrefsDialog} />
                     </TopRowColumn>
                     <TopRowColumn>
-                        <SingleNoteStave prompt={prompt} />
+                        <SingleNoteStave prompt={prompt} onKeyChange={onKeyChange} />
                     </TopRowColumn>
                 </TopRow>
 

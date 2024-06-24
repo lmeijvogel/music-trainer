@@ -11,6 +11,7 @@ import { HardLink } from "../../HardLink";
 import { useMobileDisplay } from "../../hooks/useMobileDisplay";
 import { ErrorDisplay } from "../../ErrorDisplay";
 import { findNextPrompt } from "../../helpers/promptGeneratorHelpers";
+import { noop } from "../../helpers/noop";
 
 export const IntervalTest = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -49,7 +50,7 @@ export const IntervalTest = () => {
     // vertical space even if it's visible
     return (<TestContainer tabIndex={0} onClick={onAppClick}>
         <ErrorDisplay text={errorMessage} />
-        <SingleNoteStave prompt={prompt} />
+        <SingleNoteStave prompt={prompt} onKeyChange={noop} />
 
         <ResponseButtons onClick={onSubmitInput} />
         {isMobileDisplay ? null : <InputField ref={inputRef} onSubmit={onSubmitInput} />}
