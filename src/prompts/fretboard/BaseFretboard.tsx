@@ -34,12 +34,10 @@ export const BaseFretboard = () => {
         })}
 
         {[3, 5, 7, 9, 15, 17, 19, 22].filter(n => n <= displayedFretCount).map(fretNumber => {
-            const fretPosition = calculateFretCenter(fretNumber);
-
-            return <Dot key={fretNumber} cx={paddingLeft + fretPosition} cy={fretBottom + fretMarkerDistance} r={fretMarkerRadius} />;
+            return <Dot key={fretNumber} fretNumber={fretNumber} fretBottom={fretBottom} />;
         })}
 
-        <OctaveMarker cx={paddingLeft + calculateFretCenter(12)} cy={fretBottom + fretMarkerDistance} r={fretMarkerRadius} />
+        <DoubleDot fretNumber={12} fretBottom={fretBottom} />
     </StyledBaseFretboard>;
 }
 
@@ -89,14 +87,30 @@ const Fret = styled.line`
     pointer-events: none;
 `;
 
-const Dot = styled.circle`
+
+const Dot = ({ fretNumber, fretBottom }: { fretNumber: number, fretBottom: number }) => {
+    const fretPosition = calculateFretCenter(fretNumber);
+
+    return <FretMarkerText x={paddingLeft + fretPosition} y={fretBottom + fretMarkerDistance}>{fretNumber}</FretMarkerText>;
+};
+
+const DoubleDot = ({ fretNumber, fretBottom }: { fretNumber: number, fretBottom: number }) => {
+    return <OctaveMarker cx={paddingLeft + calculateFretCenter(fretNumber)} cy={fretBottom + fretMarkerDistance} r={fretMarkerRadius} />
+};
+
+const FretMarkerText = styled.text`
+    font-size: 8px;
+    text-anchor: middle;
+`;
+
+const StyledDot = styled.circle`
     fill: #666666;
 `;
 
 const OctaveMarker = ({ cx, cy, r }: { cx: number, cy: number, r: number }) => {
     return <>
-        <Dot cx={cx - (r * 1.1)} cy={cy} r={r} />
-        <Dot cx={cx + (r * 1.1)} cy={cy} r={r} />
+        <StyledDot cx={cx - (r * 1.1)} cy={cy} r={r} />
+        <StyledDot cx={cx + (r * 1.1)} cy={cy} r={r} />
     </>;
 }
 
