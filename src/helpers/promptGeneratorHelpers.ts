@@ -29,8 +29,11 @@ export function pickRandomKeySignature(allowedKeySignatures: string[]) {
 export function pickRandomNote(keySignature: string, lowestNote: string, highestNote: string, emphasizedNotes: string[] = []) {
     const candidateNotes = enumerateCandidateNotes(keySignature, lowestNote, highestNote);
 
+    // Only pick emphasized notes that are selectable
+    const emphasizedNotesInRange = emphasizedNotes.filter(note => candidateNotes.includes(note));
+
     // Emphasized notes will be picked about twice as much
-    const candidateNotesWithEmphasizedNotes = [...candidateNotes, ...emphasizedNotes];
+    const candidateNotesWithEmphasizedNotes = [...candidateNotes, ...emphasizedNotesInRange];
 
     const randomIndex = Math.floor(Math.random() * candidateNotesWithEmphasizedNotes.length);
 
