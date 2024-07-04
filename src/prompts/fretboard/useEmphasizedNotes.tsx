@@ -19,11 +19,11 @@ export const useEmphasizedNotes: () => [string[], (note: string) => void, (note:
     const [emphasizedNotesWeights, setEmphasizeNotesWeights] = useState<Map<string, number>>(new Map());
 
     const markCorrect: (note: string) => void = (note) => {
-        addValue(note, INCORRECT_WEIGHT);
+        addValue(note, CORRECT_WEIGHT);
     };
 
     const markIncorrect: (note: string) => void = (note) => {
-        addValue(note, CORRECT_WEIGHT);
+        addValue(note, INCORRECT_WEIGHT);
     };
 
     function addValue(note: string, delta: number) {
