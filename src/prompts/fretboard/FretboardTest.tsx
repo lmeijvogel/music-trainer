@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FretboardPromptGenerator } from "./FretboardPromptGenerator";
 import { SingleNoteStave } from "../SingleNoteStave";
 import { ClickedFretMarker, FretboardSvg, WithClickedFretList } from "./Fretboard";
@@ -42,6 +42,7 @@ export const FretboardTest = () => {
     const [prefsDialogVisible, setPrefsDialogVisible] = useState(false);
     const [config, setConfig] = useState<FretboardTestSettings>(getConfigFromLocalStorage());
 
+    const [lastOkTime, setLastOkTime] = useState(performance.now());
     const [testSpec, setTestSpec] = useState<TestSpec | undefined>(parseLocationBar(window.location));
 
     const [emphasizedNotes, markCorrect, markIncorrect] = useEmphasizedNotes();
@@ -85,6 +86,9 @@ export const FretboardTest = () => {
                 });
 
                 markCorrect(prompt.note);
+
+                setLastOkTime(performance.now());
+
                 if (!testSpec) setPrompt(findNextPrompt(promptGenerator.makeRandomPrompt, prompt));
 
                 setErrorMessage(undefined);
@@ -145,6 +149,9 @@ export const FretboardTest = () => {
                     <TopRowColumn>
                         <SingleNoteStave prompt={prompt} onKeyChange={onKeyChange} />
                     </TopRowColumn>
+                    <TopRowColumn>
+                        <Timer lastOkTime={lastOkTime} />
+                    </TopRowColumn>
                 </TopRow>
 
                 <FretboardSvg viewBox={viewBox}>
@@ -185,6 +192,43 @@ const TopRowColumn = styled.div`
     align-items: center;
 
     width: 33%;
+`;
+
+const Timer = ({ lastOkTime }: { lastOkTime: number }) => {
+    const [delta, setDelta] = useState(0);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const interval = useRef<any>();
+
+    const startCounter = useCallback(() => setInterval(() => setDelta(performance.now() - lastOkTime), 55), [lastOkTime]);
+
+    const onVisibilityChange = useCallback(() => {
+        if (document.hidden) {
+            clearInterval(interval.current);
+        } else {
+            interval.current = startCounter();
+        }
+    }, [startCounter]);
+
+    useEffect(() => {
+        interval.current = startCounter();
+        document.addEventListener("visibilitychange", onVisibilityChange);
+
+        return () => {
+            clearInterval(interval.current);
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+        };
+    }, [lastOkTime, onVisibilityChange, startCounter]);
+
+    const deltaString = `${delta / 1000}00000`;
+
+    const displayedDelta = deltaString.substr(0, 5);
+
+    return <StyledTimer>{displayedDelta}</StyledTimer>;
+};
+
+const StyledTimer = styled.div`
+font-family: "monospace";
 `;
 
 function getConfigFromLocalStorage(): FretboardTestSettings {
