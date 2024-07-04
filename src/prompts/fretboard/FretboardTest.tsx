@@ -222,7 +222,7 @@ const Timer = ({ lastOkTime }: { lastOkTime: number }) => {
 
     const deltaString = `${delta / 1000}00000`;
 
-    const displayedDelta = deltaString.substr(0, 5);
+    const displayedDelta = deltaString.substring(0, 5);
 
     return <StyledTimer>{displayedDelta}</StyledTimer>;
 };
