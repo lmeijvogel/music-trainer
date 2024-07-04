@@ -41,10 +41,10 @@ export class FretboardPromptGenerator {
     }
 
     private getStringsFromLevel() {
-        const highestNote = this.settings.minString ?? allStrings[0];
+        const highestString = this.settings.minString ?? allStrings[0];
 
-        const lowestNote = this.settings.maxString ?? allStrings[0];
+        const lowestString = this.settings.maxString ?? allStrings[0];
 
-        return [lowestNote, highestNote];
+        return [lowestString, highestString];
     }
 }
