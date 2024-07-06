@@ -92,19 +92,28 @@ const GuitarString = ({ stringNumber }: GuitarStringProps) => {
                 const xLeft = calculateFretPosition(fret - 1, fullScaleLength) + paddingLeft;
                 const xRight = calculateFretPosition(fret, fullScaleLength) + paddingLeft;
 
-                return <StringLine key={position} x1={xLeft} x2={xRight} y1={y} y2={y} />;
+                return <StringLine key={position} x1={xLeft} x2={xRight} y1={y} y2={y} $width={stringWidth(stringNumber)} />;
             })}
         </>
     );
 };
 
+function stringWidth(index: number): number {
+    switch (index) {
+        case 5: return 1.7;
+        case 4: return 1.5;
+        case 3: return 1.4;
+        default: return 1;
+    }
+}
+
 const StringLabel = styled.text`
     font-size: 10px;
 `;
 
-const StringLine = styled.line`
+const StringLine = styled.line<{ $width: number }>`
     stroke: black;
-    stroke-width: 0.8px;
+    stroke-width: ${props => props.$width * 0.8}px;
     pointer-events: none;
 `;
 
