@@ -134,10 +134,11 @@ const Dot = ({ fretNumber, fretBottom }: { fretNumber: number; fretBottom: numbe
 };
 
 const DoubleDot = ({ fretNumber, fretBottom }: { fretNumber: number; fretBottom: number }) => {
+    // To be honest, I don't know why 2 * fretMarkerRadius from cy, but it looks OK.
     return (
         <OctaveMarker
             cx={paddingLeft + calculateFretCenter(fretNumber)}
-            cy={fretBottom + fretMarkerDistance}
+            cy={fretBottom + fretMarkerDistance - 2 * fretMarkerRadius}
             r={fretMarkerRadius}
         />
     );
