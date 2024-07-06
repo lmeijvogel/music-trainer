@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FretboardPromptGenerator } from "./FretboardPromptGenerator";
 import { SingleNoteStave } from "../SingleNoteStave";
 import { ClickedFretMarker, FretboardSvg, WithClickedFretList } from "./Fretboard";
@@ -29,6 +29,7 @@ import { useEmphasizedNotes } from "./useEmphasizedNotes";
 import { TestPreferencesDisplay } from "./TestPreferencesDisplay";
 import { useStringDistance } from "../../hooks/useStringDistance";
 import { Direction } from "tonal";
+import { Timer } from "./Timer";
 
 const defaultFretboardTestSettings: FretboardTestSettings = {
     minString: "E5",
@@ -163,7 +164,7 @@ export const FretboardTest = () => {
                         onFretClick={onSubmitInput}
                     />
 
-                    <ClickedFretsGroup>
+                    <g>
                         {clickedFrets.map((clickedFret) => (
                             <ClickedFretMarker
                                 key={clickedFret.id}
@@ -171,7 +172,7 @@ export const FretboardTest = () => {
                                 afterFadeout={clearClickedFrets}
                             />
                         ))}
-                    </ClickedFretsGroup>
+                    </g>
                     <BaseFretboard />
                 </FretboardSvg>
 
@@ -190,45 +191,9 @@ const TopRowColumn = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 
     width: 33%;
-`;
-
-const Timer = ({ lastOkTime }: { lastOkTime: number }) => {
-    const [delta, setDelta] = useState(0);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const interval = useRef<any>();
-
-    const startCounter = useCallback(() => setInterval(() => setDelta(performance.now() - lastOkTime), 55), [lastOkTime]);
-
-    const onVisibilityChange = useCallback(() => {
-        if (document.hidden) {
-            clearInterval(interval.current);
-        } else {
-            interval.current = startCounter();
-        }
-    }, [startCounter]);
-
-    useEffect(() => {
-        interval.current = startCounter();
-        document.addEventListener("visibilitychange", onVisibilityChange);
-
-        return () => {
-            clearInterval(interval.current);
-            document.removeEventListener("visibilitychange", onVisibilityChange);
-        };
-    }, [lastOkTime, onVisibilityChange, startCounter]);
-
-    const deltaString = `${delta / 1000}00000`;
-
-    const displayedDelta = deltaString.substring(0, 5);
-
-    return <StyledTimer>{displayedDelta}</StyledTimer>;
-};
-
-const StyledTimer = styled.div`
-font-family: "monospace";
 `;
 
 function getConfigFromLocalStorage(): FretboardTestSettings {
@@ -249,5 +214,3 @@ function getConfigFromLocalStorage(): FretboardTestSettings {
 function storeFretboardTestSettingsInLocalStorage(settings: FretboardTestSettings) {
     localStorage.setItem("fretboardTestSettings", JSON.stringify(settings));
 }
-
-const ClickedFretsGroup = styled.g``;
