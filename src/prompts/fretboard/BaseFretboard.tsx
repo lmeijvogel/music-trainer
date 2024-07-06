@@ -1,6 +1,17 @@
 import styled from "styled-components";
 import { calculateFretPosition } from "./calculateFretPosition";
-import { displayedFretCount, fretMarkerDistance, fretMarkerRadius, fretPadding, fretTop, fullScaleLength, octavePosition, paddingLeft, paddingTop, strings } from "./constants";
+import {
+    displayedFretCount,
+    fretMarkerDistance,
+    fretMarkerRadius,
+    fretPadding,
+    fretTop,
+    fullScaleLength,
+    octavePosition,
+    paddingLeft,
+    paddingTop,
+    strings
+} from "./constants";
 import { getY, range } from "./helpers";
 import { useStringDistance } from "../../hooks/useStringDistance";
 
@@ -16,30 +27,42 @@ export const BaseFretboard = () => {
 
     const fretBottom = (strings.length - 1) * stringDistance + paddingTop + fretPadding;
 
-    return <StyledBaseFretboard>
-        {strings.map((note, index) => (
-            <GuitarString key={note} stringNumber={index} />
-        ))}
+    return (
+        <StyledBaseFretboard>
+            {strings.map((note, index) => (
+                <GuitarString key={note} stringNumber={index} />
+            ))}
 
-        {range(0, 12).map(fretNumber => {
-            const x = calculateFretPosition(fretNumber, fullScaleLength);
+            {range(0, 12).map((fretNumber) => {
+                const x = calculateFretPosition(fretNumber, fullScaleLength);
 
-            return <Fret key={fretNumber} x1={paddingLeft + x} x2={paddingLeft + x} y1={fretTop} y2={fretBottom} />
-        })}
-        {range(1, displayedFretCount - 12).map(fretNumber => {
-            // Above the octave
-            const x = calculateFretPosition(fretNumber, fullScaleLength / 2);
+                return <Fret key={fretNumber} x1={paddingLeft + x} x2={paddingLeft + x} y1={fretTop} y2={fretBottom} />;
+            })}
+            {range(1, displayedFretCount - 12).map((fretNumber) => {
+                // Above the octave
+                const x = calculateFretPosition(fretNumber, fullScaleLength / 2);
 
-            return <Fret key={fretNumber} x1={octavePosition + paddingLeft + x} x2={octavePosition + paddingLeft + x} y1={fretTop} y2={fretBottom} />
-        })}
+                return (
+                    <Fret
+                        key={fretNumber}
+                        x1={octavePosition + paddingLeft + x}
+                        x2={octavePosition + paddingLeft + x}
+                        y1={fretTop}
+                        y2={fretBottom}
+                    />
+                );
+            })}
 
-        {[3, 5, 7, 9, 15, 17, 19, 22].filter(n => n <= displayedFretCount).map(fretNumber => {
-            return <Dot key={fretNumber} fretNumber={fretNumber} fretBottom={fretBottom} />;
-        })}
+            {[3, 5, 7, 9, 15, 17, 19, 22]
+                .filter((n) => n <= displayedFretCount)
+                .map((fretNumber) => {
+                    return <Dot key={fretNumber} fretNumber={fretNumber} fretBottom={fretBottom} />;
+                })}
 
-        <DoubleDot fretNumber={12} fretBottom={fretBottom} />
-    </StyledBaseFretboard>;
-}
+            <DoubleDot fretNumber={12} fretBottom={fretBottom} />
+        </StyledBaseFretboard>
+    );
+};
 
 const StyledBaseFretboard = styled.g`
     pointer-events: none;
@@ -59,16 +82,20 @@ const GuitarString = ({ stringNumber }: GuitarStringProps) => {
 
     const label = stringNote === "E5" ? "e" : stringNote[0];
 
-    return <>
-        <StringLabel x={fretLabelX} y={y} dominantBaseline="middle">{label}</StringLabel>
-        {range(0, displayedFretCount - 1).map((_, position) => {
-            const fret = position + 1;
-            const xLeft = calculateFretPosition(fret - 1, fullScaleLength) + paddingLeft;
-            const xRight = calculateFretPosition(fret, fullScaleLength) + paddingLeft;
+    return (
+        <>
+            <StringLabel x={fretLabelX} y={y} dominantBaseline="middle">
+                {label}
+            </StringLabel>
+            {range(0, displayedFretCount - 1).map((_, position) => {
+                const fret = position + 1;
+                const xLeft = calculateFretPosition(fret - 1, fullScaleLength) + paddingLeft;
+                const xRight = calculateFretPosition(fret, fullScaleLength) + paddingLeft;
 
-            return <StringLine key={position} x1={xLeft} x2={xRight} y1={y} y2={y} />;
-        })}
-    </>;
+                return <StringLine key={position} x1={xLeft} x2={xRight} y1={y} y2={y} />;
+            })}
+        </>
+    );
 };
 
 const StringLabel = styled.text`
@@ -87,15 +114,24 @@ const Fret = styled.line`
     pointer-events: none;
 `;
 
-
-const Dot = ({ fretNumber, fretBottom }: { fretNumber: number, fretBottom: number }) => {
+const Dot = ({ fretNumber, fretBottom }: { fretNumber: number; fretBottom: number }) => {
     const fretPosition = calculateFretCenter(fretNumber);
 
-    return <FretMarkerText x={paddingLeft + fretPosition} y={fretBottom + fretMarkerDistance}>{fretNumber}</FretMarkerText>;
+    return (
+        <FretMarkerText x={paddingLeft + fretPosition} y={fretBottom + fretMarkerDistance}>
+            {fretNumber}
+        </FretMarkerText>
+    );
 };
 
-const DoubleDot = ({ fretNumber, fretBottom }: { fretNumber: number, fretBottom: number }) => {
-    return <OctaveMarker cx={paddingLeft + calculateFretCenter(fretNumber)} cy={fretBottom + fretMarkerDistance} r={fretMarkerRadius} />
+const DoubleDot = ({ fretNumber, fretBottom }: { fretNumber: number; fretBottom: number }) => {
+    return (
+        <OctaveMarker
+            cx={paddingLeft + calculateFretCenter(fretNumber)}
+            cy={fretBottom + fretMarkerDistance}
+            r={fretMarkerRadius}
+        />
+    );
 };
 
 const FretMarkerText = styled.text`
@@ -107,11 +143,11 @@ const StyledDot = styled.circle`
     fill: #666666;
 `;
 
-const OctaveMarker = ({ cx, cy, r }: { cx: number, cy: number, r: number }) => {
-    return <>
-        <StyledDot cx={cx - (r * 1.1)} cy={cy} r={r} />
-        <StyledDot cx={cx + (r * 1.1)} cy={cy} r={r} />
-    </>;
-}
-
-
+const OctaveMarker = ({ cx, cy, r }: { cx: number; cy: number; r: number }) => {
+    return (
+        <>
+            <StyledDot cx={cx - r * 1.1} cy={cy} r={r} />
+            <StyledDot cx={cx + r * 1.1} cy={cy} r={r} />
+        </>
+    );
+};
