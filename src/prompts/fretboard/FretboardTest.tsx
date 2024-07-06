@@ -193,7 +193,7 @@ const TopRowColumn = styled.div`
     align-items: center;
     justify-content: center;
 
-    width: 33%;
+    flex-grow: 1;
 `;
 
 function getConfigFromLocalStorage(): FretboardTestSettings {
